@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 use App\mmaster_pelanggaran;
 class cmaster_pelanggaran extends Controller
 {
-	  public function index()
+	 public function index(Request $request)
 		{
 			//
-			$data = \App\mmaster_pelanggaran::all();
+			$per_page = \Request::get('per_page') ?: 100;
+			$data = \App\mmaster_pelanggaran::paginate($per_page);
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
