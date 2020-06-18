@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use App\Departement;
 class CDepartementController extends Controller
 {
-	  public function index()
+	   public function index(Request $request)
 		{
 			//
-			$data = \App\MDepartement::all();
+			$per_page = \Request::get('per_page') ?: 100;
+			$data = \App\MDepartement::paginate($per_page);
+			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
