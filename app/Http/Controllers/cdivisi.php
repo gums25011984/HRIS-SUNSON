@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 use App\mdivisi;
 class Cdivisi extends Controller
 {
-	  public function index()
+	  public function index(Request $request)
 		{
 			//
-			$data = \App\mdivisi::all();
+			$per_page = \Request::get('per_page') ?: 100;
+			$data = \App\mdivisi::paginate($per_page);
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
