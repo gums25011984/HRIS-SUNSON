@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 use App\MAlat_Kontrasepsi;
 class CAlat_Kontrasepsi extends Controller
 {
-	  public function index()
+	 public function index(Request $request)
 		{
 			//
-			$data = \App\MAlat_Kontrasepsi::all();
+			$per_page = \Request::get('per_page') ?: 100;
+			$data = \App\MAlat_Kontrasepsi::paginate($per_page);
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
