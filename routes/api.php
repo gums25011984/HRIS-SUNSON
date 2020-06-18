@@ -17,6 +17,21 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//mhkaryawan
+Route::get('hkaryawan','chkaryawan@index');
+
+//rjabatan
+Route::get('rjabatan','rjabatan@index');
+
+//rspt
+Route::get('permintaan','permintaan@index');
+
+//rspt
+Route::get('rspt','rspt@index');
+
+//mspt
+Route::get('spt','cspt@index');
+
 // departement
 Route::get('departement','CDepartementController@index');
 Route::get('/departement/{id}','CDepartementController@show');

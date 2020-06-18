@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\mpendidikan;
+
 class cpendidikan extends Controller
 {
 	  public function index()
 		{
 			//
-			$data = \App\mpendidikan::all();
+			$data = \App\mpendidikan::paginate(2);
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
