@@ -7,10 +7,11 @@ use App\mpendidikan;
 
 class cpendidikan extends Controller
 {
-	  public function index()
+	  public function index(Request $request)
 		{
 			//
-			$data = \App\mpendidikan::paginate(2);
+			$per_page = \Request::get('per_page') ?: 100;
+			$data = \App\mpendidikan::paginate($per_page);
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
