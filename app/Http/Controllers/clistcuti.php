@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 class clistcuti extends Controller
 {
-	  public function index()
+	  public function index(Request $request)
 		{
-			$data = DB::select("SELECT a.idkaryawan,a.nik,a.nama,IFNULL(e.penggunaan_cuti,0) AS cuti_digunakan,IFNULL(c.cuti_darilembur,0) AS cuti_darilembur,
+			$srch = $request->srch; 
+			$per_page = $request->per_page;
+			
+			$tableIds = DB::select("SELECT a.idkaryawan,a.nik,a.nama,IFNULL(e.penggunaan_cuti,0) AS cuti_digunakan,IFNULL(c.cuti_darilembur,0) AS cuti_darilembur,
 		IFNULL(t1.cutitahunan,0) AS cutitahunan,IFNULL(b.cutikip,0) AS cutikip,IFNULL(d.cutiip,0) AS cutiip,
 		IFNULL(c.cuti_darilembur,0) + IFNULL(t1.cutitahunan,0) + IFNULL(b.cutikip,0) + IFNULL(d.cutiip,0) AS jmlcuti,
 		(IFNULL(c.cuti_darilembur,0) + IFNULL(t1.cutitahunan,0) + IFNULL(b.cutikip,0) + IFNULL(d.cutiip,0))-IFNULL(e.penggunaan_cuti,0)  AS sisa_cuti
@@ -31,15 +36,48 @@ class clistcuti extends Controller
 			  GROUP BY c.idkaryawan
 			 ) AS e ON a.idkaryawan  = e.idkaryawan where a.nik = '2767'");
 
-			if($data > 0){ //mengecek apakah data kosong atau tidak
+			$jsonResult = array();
+		
+		for($i = 0;$i < count($tableIds);$i++)
+        {
+			
+			$jsonResult[$i]["idkaryawan"] = $tableIds[$i]->idkaryawan;
+			$jsonResult[$i]["nik"] = $tableIds[$i]->nik;
+			$jsonResult[$i]["nama"] = $tableIds[$i]->nama;
+			$jsonResult[$i]["cuti_digunakan"] = $tableIds[$i]->cuti_digunakan;
+			$jsonResult[$i]["cuti_darilembur"] = $tableIds[$i]->cuti_darilembur;
+			$jsonResult[$i]["cutitahunan"] = $tableIds[$i]->cutitahunan;
+			$jsonResult[$i]["cutikip"] = $tableIds[$i]->cutikip;
+			$jsonResult[$i]["cutiip"] = $tableIds[$i]->cutiip;
+			$jsonResult[$i]["sisa_cuti"] = $tableIds[$i]->sisa_cuti;
+
+
+			
+			
+		 }
+		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
-				$res['values'] = $data;
+				$res['values'] = $jsonResult;
+				$res = $this->paginate($jsonResult,$per_page);
 				return response($res);
 			}
 			else{
 				$res['message'] = "Empty!";
 				return response($res);
 			}
+		
+		}
+		
+		public function paginate($items,$per_page,$pageStart=1)
+		{
+			$per_page = \Request::get('per_page') ?: 100;
+			// Start displaying items from this number;
+			$offSet = ($pageStart * $per_page) - $per_page; 
+	
+			// Get only the items you need using array_slice
+			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
+	
+			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
 		}
 		
 }
