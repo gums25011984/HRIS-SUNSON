@@ -4,24 +4,56 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\mjadwal_kerja;
 class cjadwal_kerja extends Controller
 {
-	  public function index()
+	   public function index(Request $request)
 		{
-			$data = DB::select("SELECT a.idjadwal_kerja,a.tgl,b.mgroup_kerja,c.parameter from tjadwal_kerja as a left join
+			$srch = $request->srch; 
+			$per_page = $request->per_page;
+			
+			$tableIds = DB::select("SELECT a.idjadwal_kerja,a.tgl,b.mgroup_kerja,c.parameter from tjadwal_kerja as a left join
 		tmgroup_kerja as b ON a.idmgroup_kerja = b.idmgroup_kerja left join tparameter as c on a.idparameter = c.idparameter");
 
-			if($data > 0){ //mengecek apakah data kosong atau tidak
+			$jsonResult = array();
+		
+		for($i = 0;$i < count($tableIds);$i++)
+        {
+			$jsonResult[$i]["idjadwal_kerja"] = $tableIds[$i]->idjadwal_kerja;
+			$jsonResult[$i]["tgl"] = $tableIds[$i]->tgl;
+			$jsonResult[$i]["mgroup_kerja"] = $tableIds[$i]->mgroup_kerja;
+			$jsonResult[$i]["parameter"] = $tableIds[$i]->parameter;
+			
+			
+		 }
+		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
-				$res['values'] = $data;
+				$res['values'] = $jsonResult;
+				$res = $this->paginate($jsonResult,$per_page);
 				return response($res);
 			}
 			else{
 				$res['message'] = "Empty!";
 				return response($res);
 			}
+		
 		}
+		
+		public function paginate($items,$per_page,$pageStart=1)
+		{
+			$per_page = \Request::get('per_page') ?: 100;
+			// Start displaying items from this number;
+			$offSet = ($pageStart * $per_page) - $per_page; 
+	
+			// Get only the items you need using array_slice
+			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
+	
+			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+		}
+		
 		
 		public function store(Request $request){
 		 $jadwal_kerja = new \App\mjadwal_kerja();
