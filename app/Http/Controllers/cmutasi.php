@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\mmutasi;
 class cmutasi extends Controller
 {
-	  public function index()
+	  public function index(Request $request)
 		{
-			$data = DB::select("SELECT a.idkaryawan,a.idmutasi,a.tgl,b.nik,b.nama ,c.departemen AS dept_awal,d.divisi AS 
+			$srch = $request->srch; 
+			$per_page = $request->per_page;
+			
+			$tableIds = DB::select("SELECT a.idkaryawan,a.idmutasi,a.tgl,b.nik,b.nama ,c.departemen AS dept_awal,d.divisi AS 
 div_awal,e.jabatan AS jab_awal,f.departemen AS dept,g.divisi AS divisi,h.jabatan AS jabatan, a.ket,
 a.nmkadep,a.`tglacckadep`,a.`nmhrd`,a.`tglacchrd`,a.`nmdirektur`,a.`tglaccdirektur`,
 a.`iddepartemen_baru`,a.`iddivisi_baru`,a.`idjabatan_baru`,
@@ -22,15 +28,62 @@ LEFT JOIN tdepartemen AS f ON a.`iddepartemen_baru` = f.`iddepartemen`
 LEFT JOIN tdivisi AS g ON a.`iddivisi_baru` = g.`iddivisi`
 LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan");
 
-			if($data > 0){ //mengecek apakah data kosong atau tidak
+		$jsonResult = array();
+		
+		for($i = 0;$i < count($tableIds);$i++)
+        {
+			$jsonResult[$i]["idkaryawan"] = $tableIds[$i]->idkaryawan;
+			$jsonResult[$i]["idmutasi"] = $tableIds[$i]->idmutasi;
+			$jsonResult[$i]["tgl"] = $tableIds[$i]->tgl;
+			$jsonResult[$i]["nik"] = $tableIds[$i]->nik;
+			$jsonResult[$i]["nama"] = $tableIds[$i]->nama;
+			$jsonResult[$i]["dept_awal"] = $tableIds[$i]->dept_awal;
+			$jsonResult[$i]["div_awal"] = $tableIds[$i]->div_awal;
+			$jsonResult[$i]["jab_awal"] = $tableIds[$i]->jab_awal;
+			$jsonResult[$i]["dept"] = $tableIds[$i]->dept;
+			
+			$jsonResult[$i]["divisi"] = $tableIds[$i]->divisi;
+			$jsonResult[$i]["jabatan"] = $tableIds[$i]->jabatan;
+			$jsonResult[$i]["ket"] = $tableIds[$i]->ket;
+			$jsonResult[$i]["nmkadep"] = $tableIds[$i]->nmkadep;
+
+			$jsonResult[$i]["tglacckadep"] = $tableIds[$i]->tglacckadep;
+			$jsonResult[$i]["nmhrd"] = $tableIds[$i]->nmhrd;
+			$jsonResult[$i]["tglacchrd"] = $tableIds[$i]->tglacchrd;
+			$jsonResult[$i]["nmdirektur"] = $tableIds[$i]->nmdirektur;
+
+			$jsonResult[$i]["tglaccdirektur"] = $tableIds[$i]->tglaccdirektur;
+			$jsonResult[$i]["iddepartemen_baru"] = $tableIds[$i]->iddepartemen_baru;
+			$jsonResult[$i]["iddivisi_baru"] = $tableIds[$i]->iddivisi_baru;
+			$jsonResult[$i]["idjabatan_baru"] = $tableIds[$i]->idjabatan_baru;
+			$jsonResult[$i]["iddepartemen_asal"] = $tableIds[$i]->iddepartemen_asal;
+			$jsonResult[$i]["iddivisi_asal"] = $tableIds[$i]->iddivisi_asal;
+			$jsonResult[$i]["idjabatan_asal"] = $tableIds[$i]->idjabatan_asal;
+
+		 }
+		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
-				$res['values'] = $data;
+				$res['values'] = $jsonResult;
+				$res = $this->paginate($jsonResult,$per_page);
 				return response($res);
 			}
 			else{
 				$res['message'] = "Empty!";
 				return response($res);
 			}
+		
+		}
+		
+		public function paginate($items,$per_page,$pageStart=1)
+		{
+			$per_page = \Request::get('per_page') ?: 100;
+			// Start displaying items from this number;
+			$offSet = ($pageStart * $per_page) - $per_page; 
+	
+			// Get only the items you need using array_slice
+			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
+	
+			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
 		}
 		
 		public function store(Request $request){
