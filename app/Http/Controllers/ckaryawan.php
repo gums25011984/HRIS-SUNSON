@@ -30,8 +30,7 @@ class Ckaryawan extends Controller
 				left join tdivisi as j on a.iddivisi = j.iddivisi where a.nama like '" . $search . "%' or a.nik like '" . $search . "%' or a.jk like '" . $search . "%'  or c.jabatan like '" . $search . "%' or d.departemen like '" . $search . "%'  or i.mgroup_kerja like '" . $search . "%' or a.hp like '" . $search . "%'  "));
 				
         $jsonResult = array();
-		
-		
+
         for($i = 0;$i < count($tableIds);$i++)
         {
 			$jsonResult[$i]["idkaryawan"] = $tableIds[$i]->idkaryawan;
@@ -57,13 +56,13 @@ class Ckaryawan extends Controller
 			$jsonResult[$i]["tanggal_diangkat"] = $tableIds[$i]->tanggal_diangkat;
             
         }
-		
+
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-		 
 				$res['message'] = "Success!";
 				$res['values'] = $jsonResult;
-				
-				$res = $this->paginate($jsonResult,$page);
+				$article = collect($jsonResult);
+				$article = $article->sortBy($sort);
+				$res = $this->paginate($article,$page);
 				return response($res);
 			}
 			else{
@@ -76,13 +75,9 @@ class Ckaryawan extends Controller
 		public function paginate($items,$page,$pageStart=1)
 		{
 			$page = \Request::get('page') ?: 100;
-			// Start displaying items from this number;
-			$offSet = ($pageStart * $page) - $page; 
-	
-			// Get only the items you need using array_slice
-			$itemsForCurrentPage = array_slice($items, $offSet, $page, true);
-	
-			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+			$currentPage = LengthAwarePaginator::resolveCurrentPage();
+			$currentResults = $items->slice(($currentPage - 1) * $page, $page)->all();
+			return new LengthAwarePaginator($currentResults, count($items), $page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
 		}
 		
 		
