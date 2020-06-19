@@ -14,7 +14,7 @@ class Ckaryawan extends Controller
 		{
 		$search = $request->search; 
 		$page = $request->page; 
-		$sort = $request->sort;
+		$sort = \Request::get('sort') ?: 'idkaryawan';
 	/*	$tableIds = DB::select( DB::raw("SELECT idjabatan,jabatan,'' as karyawan FROM tjabatan"));*/
 		$tableIds = DB::select( DB::raw("SELECT a.idkaryawan,a.pin,a.nik,a.noktp,a.nama,a.nobpjs,a.tempat_lahir,a.agama,a.jk,
 				CONCAT_WS(' ',a.alamat, e.name ,f.name,g.name ,h.name) as alt,a.tlp,j.divisi,
@@ -58,8 +58,7 @@ class Ckaryawan extends Controller
         }
 
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $jsonResult;
+				
 				$article = collect($jsonResult);
 				$article = $article->sortBy($sort);
 				$res = $this->paginate($article,$page);

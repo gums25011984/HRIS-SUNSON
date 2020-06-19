@@ -11,7 +11,7 @@ class cstatus_pernikahan extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
-			$sort = $request->sort;
+			$sort = \Request::get('sort') ?: 'idstatus_pernikahan';
 			$data = \App\Mstatus_pernikahan::where('status_pernikahan','like',"%".$search."%")
 			->orWhere('kdstatus_pernikahan', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mstatus_pernikahan::paginate($per_page);*/

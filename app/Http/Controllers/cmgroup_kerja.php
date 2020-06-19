@@ -11,16 +11,14 @@ class cmgroup_kerja extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
-			$sort = $request->sort;
+			$sort = \Request::get('sort') ?: 'idmgroup_kerja';
 			$data = \App\Mmgroup_kerja::where('mgroup_kerja','like',"%".$search."%")
 			->orWhere('kdmgroup_kerja', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mmgroup_kerja::paginate($per_page);*/
 			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
+				return response($data);
 			}
 			else{
 				$res['message'] = "Empty!";

@@ -69,8 +69,7 @@ tot_potongan, gaji_bersih FROM tslipgaji where  (nama like '" . $search . "%' or
 			
 		 }
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $jsonResult;
+				
 				$res = $this->paginate($jsonResult,$per_page,$pageStart);
 				return response($res);
 			}

@@ -11,7 +11,7 @@ class ctransportlembur extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
-			$sort = $request->sort;
+			$sort = \Request::get('sort') ?: 'jurusan';
 			$data = \App\Mtransportlembur::where('jurusan','like',"%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mtransport_lembur::paginate($per_page);*/
 			

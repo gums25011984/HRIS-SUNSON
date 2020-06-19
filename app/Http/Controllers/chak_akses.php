@@ -14,9 +14,7 @@ class Chak_akses extends Controller
 
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
+				return response($data);
 			}
 			else{
 				$res['message'] = "Empty!";

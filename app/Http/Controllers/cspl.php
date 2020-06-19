@@ -32,8 +32,7 @@ class cspl extends Controller
 			
 		 }
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $jsonResult;
+				
 				$res = $this->paginate($jsonResult,$per_page);
 				return response($res);
 			}

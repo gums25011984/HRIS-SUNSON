@@ -12,15 +12,14 @@ class cparameter extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = \Request::get('sort') ?: 'idparameter';
 			$data = \App\Mparameter::where('parameter','like',"%".$search."%")
-			->orWhere('kdparameter', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kdparameter', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mparameter::paginate($per_page);*/
 			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
+				return response($data);
 			}
 			else{
 				$res['message'] = "Empty!";

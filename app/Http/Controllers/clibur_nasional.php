@@ -11,15 +11,14 @@ class clibur_nasional extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = \Request::get('sort') ?: 'idlibur_nasional';
 			$data = \App\Mlibur_nasional::where('libur_nasional','like',"%".$search."%")
-			->orWhere('kdlibur_nasional', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kdlibur_nasional', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mlibur_nasional::paginate($per_page);*/
 			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
+				return response($data);
 			}
 			else{
 				$res['message'] = "Empty!";

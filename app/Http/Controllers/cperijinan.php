@@ -11,16 +11,14 @@ class cperijinan extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
-			$sort = $request->sort;
+			$sort = \Request::get('sort') ?: 'idperijinan';
 			$data = \App\Mperijinan::where('nama_perijinan','like',"%".$search."%")
 			->orWhere('kode_perijinan', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mperijinan::paginate($per_page);*/
 			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
+				return response($data);
 			}
 			else{
 				$res['message'] = "Empty!";

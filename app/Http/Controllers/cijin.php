@@ -35,8 +35,7 @@ FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left j
         }
 
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $jsonResult;
+				
 				$res = $this->paginate($jsonResult,$per_page);
 				return response($res);
 			}

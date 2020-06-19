@@ -41,8 +41,7 @@ class cabsen extends Controller
 			$jsonResult[$i]["transport_lembur"] = $tableIds[$i]->transport_lembur;
 		 }
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $jsonResult;
+				
 				$res = $this->paginate($jsonResult,$per_page);
 				return response($res);
 			}

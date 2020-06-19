@@ -14,7 +14,7 @@ class Cgapok extends Controller
 		{
 			$search = $request->search; 
 			$page = $request->page; 
-			$sort = $request->sort;
+			$sort = \Request::get('sort') ?: 'idgapok';
 			
 			$tableIds = DB::select("SELECT a.idkaryawan,b.idgapok,c.kdstatus_kerja,a.nik,a.nama, 
 b.gaji_pokok,b.tunj_jabatan,b.tunj_prestasi,b.tunj_fungsional,b.tunj_hadir,b.tunj_rajin,
@@ -48,8 +48,7 @@ left join tstatus_kerja as c ON a.idstatus_kerja = c.idstatus_kerja where a.nama
 			
 		 }
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $jsonResult;
+				
 				$article = collect($jsonResult);
 				$article = $article->sortBy($sort);
 				$res = $this->paginate($article,$page);
