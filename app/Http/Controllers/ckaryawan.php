@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\mkaryawan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 class Ckaryawan extends Controller
 {
-	  public function index()
+		public function index(Request $request)
 		{
-			//
-			$data = DB::select("SELECT a.agama,a.jk,
+		$srch = $request->srch; 
+		$per_page = $request->per_page; 
+	/*	$tableIds = DB::select( DB::raw("SELECT idjabatan,jabatan,'' as karyawan FROM tjabatan"));*/
+		$tableIds = DB::select( DB::raw("SELECT a.idkaryawan,a.pin,a.nik,a.noktp,a.nobpjs,a.tempat_lahir,a.agama,a.jk,
 				CONCAT_WS(' ',a.alamat, e.name ,f.name,g.name ,h.name) as alt,a.tlp,j.divisi,
 				a.hp,b.pendidikan,c.jabatan,d.departemen,i.mgroup_kerja,a.jobdesk,a.tanggal_masuk,a.tanggal_keluar,
 				a.`tanggal_diangkat`
@@ -21,21 +26,62 @@ class Ckaryawan extends Controller
 				left join regencies as g on a.idkota = g.id
 				left join provinces as h on a.idpropinsi = h.id
 				left join tmgroup_kerja as i on a.idgroup = i.idmgroup_kerja
-				left join tdivisi as j on a.iddivisi = j.iddivisi limit 10");
+				left join tdivisi as j on a.iddivisi = j.iddivisi"));
+        $jsonResult = array();
+		
+		
+        for($i = 0;$i < count($tableIds);$i++)
+        {
+			$jsonResult[$i]["idkaryawan"] = $tableIds[$i]->idkaryawan;
+			$jsonResult[$i]["pin"] = $tableIds[$i]->pin;
+			$jsonResult[$i]["nik"] = $tableIds[$i]->nik;
+			$jsonResult[$i]["noktp"] = $tableIds[$i]->noktp;
+			$jsonResult[$i]["nobpjs"] = $tableIds[$i]->nobpjs;
+			$jsonResult[$i]["tempat_lahir"] = $tableIds[$i]->tempat_lahir;
+			$jsonResult[$i]["agama"] = $tableIds[$i]->agama;
+			$jsonResult[$i]["jk"] = $tableIds[$i]->jk;
+			$jsonResult[$i]["alt"] = $tableIds[$i]->alt;
+			$jsonResult[$i]["tlp"] = $tableIds[$i]->tlp;
+			$jsonResult[$i]["divisi"] = $tableIds[$i]->divisi;
+			$jsonResult[$i]["hp"] = $tableIds[$i]->hp;
+			$jsonResult[$i]["pendidikan"] = $tableIds[$i]->pendidikan;
+			$jsonResult[$i]["jabatan"] = $tableIds[$i]->jabatan;
+			$jsonResult[$i]["departemen"] = $tableIds[$i]->departemen;
+			$jsonResult[$i]["mgroup_kerja"] = $tableIds[$i]->mgroup_kerja;
+			$jsonResult[$i]["jobdesk"] = $tableIds[$i]->jobdesk;
+			$jsonResult[$i]["tanggal_masuk"] = $tableIds[$i]->tanggal_masuk;
+			$jsonResult[$i]["tanggal_keluar"] = $tableIds[$i]->tanggal_keluar;
+			$jsonResult[$i]["tanggal_diangkat"] = $tableIds[$i]->tanggal_diangkat;
+            
+        }
 
-
-
-
-			if($data > 0){ //mengecek apakah data kosong atau tidak
+		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
-				$res['values'] = $data;
+				$res['values'] = $jsonResult;
+				$res = $this->paginate($jsonResult,$per_page);
 				return response($res);
 			}
 			else{
 				$res['message'] = "Empty!";
 				return response($res);
 			}
+
 		}
+			
+		public function paginate($items,$per_page,$pageStart=1)
+		{
+			$per_page = \Request::get('per_page') ?: 100;
+			// Start displaying items from this number;
+			$offSet = ($pageStart * $per_page) - $per_page; 
+	
+			// Get only the items you need using array_slice
+			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
+	
+			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+		}
+		
+		
+		
 		
 		public function store(Request $request){
 		 $karyawan = new \App\mkaryawan();
