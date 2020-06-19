@@ -9,8 +9,11 @@ class CDepartementController extends Controller
 	   public function index(Request $request)
 		{
 			//
-			$per_page = \Request::get('per_page') ?: 100;
-			$data = \App\MDepartement::paginate($per_page);
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$data = \App\MDepartement::where('departemen','like',"%".$search."%")
+			->orWhere('kddepartemen', 'like', "%".$search."%")->paginate($page);
+			/*$data = \App\MDepartement::paginate($per_page);*/
 			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
@@ -43,6 +46,7 @@ class CDepartementController extends Controller
 		public function update(Request $request, $id)
 		{
 			//
+			
 			$kddepartemen = $request->kddepartemen;
 			 $departemen = $request->departemen;
 			 $insert_by = $request->insert_by;
@@ -72,7 +76,10 @@ class CDepartementController extends Controller
 				return response($res);
 			}
 		}
-		public function show($id)
+		
+		
+		
+		/*public function show($id)
 		{
 			$data = \App\MDepartement::where('iddepartemen',$id)->get();
 		
@@ -85,7 +92,7 @@ class CDepartementController extends Controller
 				$res['message'] = "Failed!";
 				return response($res);
 			}
-		}
+		}*/
 		
 		public function delete($id)
 		{

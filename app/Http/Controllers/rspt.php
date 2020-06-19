@@ -48,7 +48,7 @@ class rspt extends Controller
 		
 		
 		
-		public function paginate($items,$perPage=2,$pageStart=1)
+	public function paginate($items,$perPage=2,$pageStart=1)
     {
 
         // Start displaying items from this number;

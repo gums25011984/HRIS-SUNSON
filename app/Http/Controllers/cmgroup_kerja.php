@@ -9,8 +9,11 @@ class cmgroup_kerja extends Controller
 	 public function index(Request $request)
 		{
 			//
-			$per_page = \Request::get('per_page') ?: 100;
-			$data = \App\mmgroup_kerja::paginate($per_page);
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$data = \App\Mmgroup_kerja::where('mgroup_kerja','like',"%".$search."%")
+			->orWhere('kdmgroup_kerja', 'like', "%".$search."%")->paginate($page);
+			/*$data = \App\Mmgroup_kerja::paginate($per_page);*/
 			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak

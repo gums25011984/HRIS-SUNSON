@@ -9,8 +9,12 @@ class Cdivisi extends Controller
 	  public function index(Request $request)
 		{
 			//
-			$per_page = \Request::get('per_page') ?: 100;
-			$data = \App\mdivisi::paginate($per_page);
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$data = \App\Mdivisi::where('divisi','like',"%".$search."%")
+			->orWhere('kddivisi', 'like', "%".$search."%")->paginate($page);
+			/*$data = \App\Mdivisi::paginate($per_page);*/
+			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";

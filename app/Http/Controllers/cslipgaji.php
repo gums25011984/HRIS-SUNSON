@@ -11,11 +11,13 @@ class cslipgaji extends Controller
 {
 	 public function index(Request $request)
 		{
-			$srch = $request->srch; 
+			$search = $request->search; 
 			$per_page = $request->per_page;
+			$pageStart = $request->page;
+			
 			$tableIds = DB::select("SELECT idslipgaji,bln,thn,periode,periodetglgaji,nik,nama,jabatan,departemen, divisi,kalender,hk,hl,mhk,mhl, qtyot,ot1,ot2,qtyotasli,status_kerja,gapok,tunj_jabatan,tunj_prestasi,premi_hadir,
 tunj_rajin,lembur, tunj_masakerja, premi_shift,transport_lembur,tunj_lainnya,totgaji, pot_absen,pot_astek, pot_spsi,pot_bisnis, pot_koperasi,
-tot_potongan, gaji_bersih FROM tslipgaji");
+tot_potongan, gaji_bersih FROM tslipgaji where  (nama like '" . $search . "%' or nik like '" . $search . "%' or jabatan like '" . $search . "%' or departemen like '" . $search . "%') ");
 
 		$jsonResult = array();
 		
@@ -69,7 +71,7 @@ tot_potongan, gaji_bersih FROM tslipgaji");
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
 				$res['values'] = $jsonResult;
-				$res = $this->paginate($jsonResult,$per_page);
+				$res = $this->paginate($jsonResult,$per_page,$pageStart);
 				return response($res);
 			}
 			else{
@@ -79,7 +81,7 @@ tot_potongan, gaji_bersih FROM tslipgaji");
 		
 		}
 		
-		public function paginate($items,$per_page,$pageStart=1)
+		public function paginate($items,$per_page,$pageStart)
 		{
 			$per_page = \Request::get('per_page') ?: 100;
 			// Start displaying items from this number;

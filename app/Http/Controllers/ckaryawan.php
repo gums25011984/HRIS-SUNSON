@@ -12,8 +12,8 @@ class Ckaryawan extends Controller
 {
 		public function index(Request $request)
 		{
-		$srch = $request->srch; 
-		$per_page = $request->per_page; 
+		$search = $request->search; 
+		$page = $request->page; 
 	/*	$tableIds = DB::select( DB::raw("SELECT idjabatan,jabatan,'' as karyawan FROM tjabatan"));*/
 		$tableIds = DB::select( DB::raw("SELECT a.idkaryawan,a.pin,a.nik,a.noktp,a.nobpjs,a.tempat_lahir,a.agama,a.jk,
 				CONCAT_WS(' ',a.alamat, e.name ,f.name,g.name ,h.name) as alt,a.tlp,j.divisi,
@@ -26,7 +26,8 @@ class Ckaryawan extends Controller
 				left join regencies as g on a.idkota = g.id
 				left join provinces as h on a.idpropinsi = h.id
 				left join tmgroup_kerja as i on a.idgroup = i.idmgroup_kerja
-				left join tdivisi as j on a.iddivisi = j.iddivisi"));
+				left join tdivisi as j on a.iddivisi = j.iddivisi where a.nama like '" . $search . "%' or a.nik like '" . $search . "%' or a.jk like '" . $search . "%'  or c.jabatan like '" . $search . "%' or d.departemen like '" . $search . "%'  or i.mgroup_kerja like '" . $search . "%' or a.hp like '" . $search . "%'"));
+				
         $jsonResult = array();
 		
 		
@@ -40,7 +41,7 @@ class Ckaryawan extends Controller
 			$jsonResult[$i]["tempat_lahir"] = $tableIds[$i]->tempat_lahir;
 			$jsonResult[$i]["agama"] = $tableIds[$i]->agama;
 			$jsonResult[$i]["jk"] = $tableIds[$i]->jk;
-			$jsonResult[$i]["alt"] = $tableIds[$i]->alt;
+			$jsonResult[$i]["alamat"] = $tableIds[$i]->alt;
 			$jsonResult[$i]["tlp"] = $tableIds[$i]->tlp;
 			$jsonResult[$i]["divisi"] = $tableIds[$i]->divisi;
 			$jsonResult[$i]["hp"] = $tableIds[$i]->hp;
@@ -58,7 +59,7 @@ class Ckaryawan extends Controller
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
 				$res['values'] = $jsonResult;
-				$res = $this->paginate($jsonResult,$per_page);
+				$res = $this->paginate($jsonResult,$page);
 				return response($res);
 			}
 			else{
@@ -68,16 +69,16 @@ class Ckaryawan extends Controller
 
 		}
 			
-		public function paginate($items,$per_page,$pageStart=1)
+		public function paginate($items,$page,$pageStart=1)
 		{
-			$per_page = \Request::get('per_page') ?: 100;
+			$page = \Request::get('page') ?: 100;
 			// Start displaying items from this number;
-			$offSet = ($pageStart * $per_page) - $per_page; 
+			$offSet = ($pageStart * $page) - $page; 
 	
 			// Get only the items you need using array_slice
-			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
+			$itemsForCurrentPage = array_slice($items, $offSet, $page, true);
 	
-			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
 		}
 		
 		

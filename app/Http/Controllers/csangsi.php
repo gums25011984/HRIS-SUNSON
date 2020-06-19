@@ -9,9 +9,12 @@ class csangsi extends Controller
 	  public function index(Request $request)
 		{
 			//
-			$per_page = \Request::get('per_page') ?: 100;
-			$data = \App\msangsi::paginate($per_page);
-
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$data = \App\Msangsi::where('sangsi','like',"%".$search."%")
+			->orWhere('kdsangsi', 'like', "%".$search."%")->paginate($page);
+			/*$data = \App\Msangsi::paginate($per_page);*/
+			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";

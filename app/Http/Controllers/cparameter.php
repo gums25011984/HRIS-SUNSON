@@ -10,8 +10,12 @@ class cparameter extends Controller
 	 public function index(Request $request)
 		{
 			//
-			$per_page = \Request::get('per_page') ?: 100;
-			$data = \App\MDepartement::paginate($per_page);
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$data = \App\Mparameter::where('parameter','like',"%".$search."%")
+			->orWhere('kdparameter', 'like', "%".$search."%")->paginate($page);
+			/*$data = \App\Mparameter::paginate($per_page);*/
+			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";

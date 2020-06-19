@@ -53,14 +53,14 @@ class rjabatan extends Controller
 		
 		
 		public function paginate($items,$perPage=2,$pageStart=1)
-    {
-
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
-
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
-
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-    }
+		{
+			
+			// Start displaying items from this number;
+			$offSet = ($pageStart * $perPage) - $perPage; 
+	
+			// Get only the items you need using array_slice
+			$itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+	
+			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+		}
 }

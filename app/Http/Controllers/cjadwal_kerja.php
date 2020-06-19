@@ -12,11 +12,11 @@ class cjadwal_kerja extends Controller
 {
 	   public function index(Request $request)
 		{
-			$srch = $request->srch; 
-			$per_page = $request->per_page;
+			$search = $request->search; 
+			$page = $request->page; 
 			
 			$tableIds = DB::select("SELECT a.idjadwal_kerja,a.tgl,b.mgroup_kerja,c.parameter from tjadwal_kerja as a left join
-		tmgroup_kerja as b ON a.idmgroup_kerja = b.idmgroup_kerja left join tparameter as c on a.idparameter = c.idparameter");
+		tmgroup_kerja as b ON a.idmgroup_kerja = b.idmgroup_kerja left join tparameter as c on a.idparameter = c.idparameter where (c.parameter like '" . $search . "%' or b.mgroup_kerja like '" . $search . "%' )");
 
 			$jsonResult = array();
 		
@@ -32,7 +32,7 @@ class cjadwal_kerja extends Controller
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
 				$res['values'] = $jsonResult;
-				$res = $this->paginate($jsonResult,$per_page);
+				$res = $this->paginate($jsonResult,$page);
 				return response($res);
 			}
 			else{
@@ -42,16 +42,16 @@ class cjadwal_kerja extends Controller
 		
 		}
 		
-		public function paginate($items,$per_page,$pageStart=1)
+		public function paginate($items,$page,$pageStart=1)
 		{
-			$per_page = \Request::get('per_page') ?: 100;
+			$page = \Request::get('page') ?: 100;
 			// Start displaying items from this number;
-			$offSet = ($pageStart * $per_page) - $per_page; 
+			$offSet = ($pageStart * $page) - $page; 
 	
 			// Get only the items you need using array_slice
-			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
+			$itemsForCurrentPage = array_slice($items, $offSet, $page, true);
 	
-			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
 		}
 		
 		
