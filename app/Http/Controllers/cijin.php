@@ -5,16 +5,39 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\mijin;
+
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 class cijin extends Controller
 {
-	  public function index()
+	  public function index(Request $request)
 		{
-			$data = DB::select("SELECT a.idijin,a.idperijinan,a.tgl,b.nama AS karyawan,a.tgl_keluar,a.jam_keluar,a.tgl_kembali,a.jam_kembali,a.ket,c.nama_perijinan
+			$srch = $request->srch; 
+			$per_page = $request->per_page;
+		
+			$tableIds = DB::select("SELECT a.idijin,a.idperijinan,a.tgl,b.nama AS karyawan,a.tgl_keluar,a.jam_keluar,a.tgl_kembali,a.jam_kembali,a.ket,c.nama_perijinan
 FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left join tperijinan as c ON a.idperijinan = c.idperijinan");
 
-			if($data > 0){ //mengecek apakah data kosong atau tidak
+		$jsonResult = array();
+        for($i = 0;$i < count($tableIds);$i++)
+        {
+			$jsonResult[$i]["idijin"] = $tableIds[$i]->idijin;
+			$jsonResult[$i]["idperijinan"] = $tableIds[$i]->idperijinan;
+			$jsonResult[$i]["tgl"] = $tableIds[$i]->tgl;
+			$jsonResult[$i]["karyawan"] = $tableIds[$i]->karyawan;
+			$jsonResult[$i]["tgl_keluar"] = $tableIds[$i]->tgl_keluar;
+			$jsonResult[$i]["jam_keluar"] = $tableIds[$i]->jam_keluar;
+			$jsonResult[$i]["tgl_kembali"] = $tableIds[$i]->tgl_kembali;
+			$jsonResult[$i]["jam_kembali"] = $tableIds[$i]->jam_kembali;
+			$jsonResult[$i]["ket"] = $tableIds[$i]->ket;
+			$jsonResult[$i]["nama_perijinan"] = $tableIds[$i]->nama_perijinan;
+        }
+
+		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
-				$res['values'] = $data;
+				$res['values'] = $jsonResult;
+				$res = $this->paginate($jsonResult,$per_page);
 				return response($res);
 			}
 			else{
@@ -22,6 +45,21 @@ FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left j
 				return response($res);
 			}
 		}
+		
+		
+		public function paginate($items,$per_page,$pageStart=1)
+		{
+			$per_page = \Request::get('per_page') ?: 100;
+			// Start displaying items from this number;
+			$offSet = ($pageStart * $per_page) - $per_page; 
+	
+			// Get only the items you need using array_slice
+			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
+	
+			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+		}
+		
+		
 		
 		public function store(Request $request){
 		  $ijin = new \App\mijin();
