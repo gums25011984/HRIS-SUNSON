@@ -4,27 +4,62 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\mpelanggaran;
 class cpelanggaran extends Controller
 {
-	  public function index()
+	  public function index(Request $request)
 		{
-			$data = DB::select("SELECT a.idpelanggaran,a.tgl,b.nama AS karyawan,c.nama AS saksi,d.nama AS 
+			$srch = $request->srch; 
+			$per_page = $request->per_page;
+			
+			$tableIds = DB::select("SELECT a.idpelanggaran,a.tgl,b.nama AS karyawan,c.nama AS saksi,d.nama AS 
 		pelapor,e.master_pelanggaran AS pelanggaran,a.ket,CONCAT_WS('  -  ',a.tglmulai_sangsi, a.tglberakhir_sangsi) as berlaku, IF (a.status IS NULL OR status = '' OR status = '0','Aktif','Tidak Aktif') as status, f.sangsi
 		FROM tpelanggaran AS a LEFT JOIN tkaryawan AS b ON a.idkaryawan = b.idkaryawan LEFT JOIN tkaryawan AS c ON a.saksi = 					
 		c.idkaryawan LEFT JOIN tkaryawan AS d ON d.idkaryawan = a.pelapor 
 		LEFT JOIN tmaster_pelanggaran AS e ON a.idmaster_pelanggaran = e.idmaster_pelanggaran left join tsangsi as f On a.idsangsi = f.idsangsi");
 
-			if($data > 0){ //mengecek apakah data kosong atau tidak
+		$jsonResult = array();
+		
+		for($i = 0;$i < count($tableIds);$i++)
+        {
+			$jsonResult[$i]["idpelanggaran"] = $tableIds[$i]->idpelanggaran;
+			$jsonResult[$i]["tgl"] = $tableIds[$i]->tgl;
+			$jsonResult[$i]["karyawan"] = $tableIds[$i]->karyawan;
+			$jsonResult[$i]["pelanggaran"] = $tableIds[$i]->pelanggaran;
+			$jsonResult[$i]["ket"] = $tableIds[$i]->ket;
+			$jsonResult[$i]["berlaku"] = $tableIds[$i]->berlaku;
+			$jsonResult[$i]["status"] = $tableIds[$i]->status;
+			$jsonResult[$i]["sangsi"] = $tableIds[$i]->sangsi;
+			
+		 }
+		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
-				$res['values'] = $data;
+				$res['values'] = $jsonResult;
+				$res = $this->paginate($jsonResult,$per_page);
 				return response($res);
 			}
 			else{
 				$res['message'] = "Empty!";
 				return response($res);
 			}
+		
 		}
+		
+		public function paginate($items,$per_page,$pageStart=1)
+		{
+			$per_page = \Request::get('per_page') ?: 100;
+			// Start displaying items from this number;
+			$offSet = ($pageStart * $per_page) - $per_page; 
+	
+			// Get only the items you need using array_slice
+			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
+	
+			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+		}
+		
 		
 		public function store(Request $request){
 		  $pelanggaran = new \App\mpelanggaran();
