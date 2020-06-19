@@ -5,22 +5,57 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\msubmenu;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 class csubmenu extends Controller
 {
-	  public function index()
+	  public function index(Request $request)
 		{
-			$data = DB::select("SELECT a.idmenuitem,a.code,a.fcode,a.nameof,a.filename,a.icon,b.nameof AS menu,@no:=@no+1 AS heh 
+			$srch = $request->srch; 
+			$per_page = $request->per_page;
+			
+			$tableIds = DB::select("SELECT a.idmenuitem,a.code,a.fcode,a.nameof,a.filename,a.icon,b.nameof AS menu,@no:=@no+1 AS heh 
 FROM sysappmenuitem AS a LEFT JOIN sysappmenu AS b ON a.fcode = b.code");
 
-			if($data > 0){ //mengecek apakah data kosong atau tidak
+			$jsonResult = array();
+		
+		for($i = 0;$i < count($tableIds);$i++)
+        {
+			
+			$jsonResult[$i]["idmenuitem"] = $tableIds[$i]->idmenuitem;
+			$jsonResult[$i]["code"] = $tableIds[$i]->code;
+			$jsonResult[$i]["fcode"] = $tableIds[$i]->fcode;
+			$jsonResult[$i]["nameof"] = $tableIds[$i]->nameof;
+			$jsonResult[$i]["filename"] = $tableIds[$i]->filename;
+			$jsonResult[$i]["icon"] = $tableIds[$i]->icon;
+			$jsonResult[$i]["menu"] = $tableIds[$i]->menu;
+
+			
+		 }
+		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
-				$res['values'] = $data;
+				$res['values'] = $jsonResult;
+				$res = $this->paginate($jsonResult,$per_page);
 				return response($res);
 			}
 			else{
 				$res['message'] = "Empty!";
 				return response($res);
 			}
+		
+		}
+		
+		public function paginate($items,$per_page,$pageStart=1)
+		{
+			$per_page = \Request::get('per_page') ?: 100;
+			// Start displaying items from this number;
+			$offSet = ($pageStart * $per_page) - $per_page; 
+	
+			// Get only the items you need using array_slice
+			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
+	
+			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
 		}
 		
 		public function store(Request $request){
