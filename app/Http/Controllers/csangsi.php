@@ -11,8 +11,9 @@ class csangsi extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = $request->sort;
 			$data = \App\Msangsi::where('sangsi','like',"%".$search."%")
-			->orWhere('kdsangsi', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kdsangsi', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Msangsi::paginate($per_page);*/
 			
 		

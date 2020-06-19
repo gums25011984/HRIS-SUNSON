@@ -11,8 +11,9 @@ class CDepartementController extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = $request->sort;
 			$data = \App\MDepartement::where('departemen','like',"%".$search."%")
-			->orWhere('kddepartemen', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kddepartemen', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\MDepartement::paginate($per_page);*/
 			
 		

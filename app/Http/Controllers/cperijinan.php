@@ -11,8 +11,9 @@ class cperijinan extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = $request->sort;
 			$data = \App\Mperijinan::where('nama_perijinan','like',"%".$search."%")
-			->orWhere('kode_perijinan', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kode_perijinan', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mperijinan::paginate($per_page);*/
 			
 		

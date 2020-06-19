@@ -10,8 +10,9 @@ class cmaster_pelanggaran extends Controller
 		{
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = $request->sort;
 			$data = \App\Mmaster_pelanggaran::where('master_pelanggaran','like',"%".$search."%")
-			->orWhere('kdmaster_pelanggaran', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kdmaster_pelanggaran', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mmaster_pelanggaran::paginate($per_page);*/
 			
 		

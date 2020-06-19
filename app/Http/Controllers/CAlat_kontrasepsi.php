@@ -9,8 +9,13 @@ class CAlat_Kontrasepsi extends Controller
 	 public function index(Request $request)
 		{
 			//
-			$per_page = \Request::get('per_page') ?: 100;
-			$data = \App\MAlat_Kontrasepsi::paginate($per_page);
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$sort = $request->sort;
+			$data = \App\Malat_kontrasepsi::where('alat_kontrasepsi','like',"%".$search."%")
+			->orWhere('kdalat_kontrasepsi', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
+			/*$data = \App\Malat_kontrasepsi::paginate($per_page);*/
+			
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";

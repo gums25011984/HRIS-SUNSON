@@ -11,8 +11,9 @@ class Cdivisi extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = $request->sort;
 			$data = \App\Mdivisi::where('divisi','like',"%".$search."%")
-			->orWhere('kddivisi', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kddivisi', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mdivisi::paginate($per_page);*/
 			
 		

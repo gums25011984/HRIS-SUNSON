@@ -11,8 +11,9 @@ class cmgroup_kerja extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = $request->sort;
 			$data = \App\Mmgroup_kerja::where('mgroup_kerja','like',"%".$search."%")
-			->orWhere('kdmgroup_kerja', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kdmgroup_kerja', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mmgroup_kerja::paginate($per_page);*/
 			
 		

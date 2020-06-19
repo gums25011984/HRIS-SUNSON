@@ -11,8 +11,9 @@ class cjabatan extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = $request->sort;
 			$data = \App\Mjabatan::where('jabatan','like',"%".$search."%")
-			->orWhere('kdjabatan', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kdjabatan', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mjabatan::paginate($per_page);*/
 			
 		

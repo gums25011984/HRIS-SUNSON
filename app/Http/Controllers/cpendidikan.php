@@ -12,8 +12,9 @@ class cpendidikan extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = $request->sort;
 			$data = \App\Mpendidikan::where('pendidikan','like',"%".$search."%")
-			->orWhere('kdpendidikan', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kdpendidikan', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mpendidikan::paginate($per_page);*/
 			
 		

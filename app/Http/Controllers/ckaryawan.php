@@ -14,8 +14,9 @@ class Ckaryawan extends Controller
 		{
 		$search = $request->search; 
 		$page = $request->page; 
+		$sort = $request->sort;
 	/*	$tableIds = DB::select( DB::raw("SELECT idjabatan,jabatan,'' as karyawan FROM tjabatan"));*/
-		$tableIds = DB::select( DB::raw("SELECT a.idkaryawan,a.pin,a.nik,a.noktp,a.nobpjs,a.tempat_lahir,a.agama,a.jk,
+		$tableIds = DB::select( DB::raw("SELECT a.idkaryawan,a.pin,a.nik,a.noktp,a.nama,a.nobpjs,a.tempat_lahir,a.agama,a.jk,
 				CONCAT_WS(' ',a.alamat, e.name ,f.name,g.name ,h.name) as alt,a.tlp,j.divisi,
 				a.hp,b.pendidikan,c.jabatan,d.departemen,i.mgroup_kerja,a.jobdesk,a.tanggal_masuk,a.tanggal_keluar,
 				a.`tanggal_diangkat`
@@ -26,7 +27,7 @@ class Ckaryawan extends Controller
 				left join regencies as g on a.idkota = g.id
 				left join provinces as h on a.idpropinsi = h.id
 				left join tmgroup_kerja as i on a.idgroup = i.idmgroup_kerja
-				left join tdivisi as j on a.iddivisi = j.iddivisi where a.nama like '" . $search . "%' or a.nik like '" . $search . "%' or a.jk like '" . $search . "%'  or c.jabatan like '" . $search . "%' or d.departemen like '" . $search . "%'  or i.mgroup_kerja like '" . $search . "%' or a.hp like '" . $search . "%'"));
+				left join tdivisi as j on a.iddivisi = j.iddivisi where a.nama like '" . $search . "%' or a.nik like '" . $search . "%' or a.jk like '" . $search . "%'  or c.jabatan like '" . $search . "%' or d.departemen like '" . $search . "%'  or i.mgroup_kerja like '" . $search . "%' or a.hp like '" . $search . "%'  "));
 				
         $jsonResult = array();
 		
@@ -38,6 +39,7 @@ class Ckaryawan extends Controller
 			$jsonResult[$i]["nik"] = $tableIds[$i]->nik;
 			$jsonResult[$i]["noktp"] = $tableIds[$i]->noktp;
 			$jsonResult[$i]["nobpjs"] = $tableIds[$i]->nobpjs;
+			$jsonResult[$i]["nama"] = $tableIds[$i]->nama;
 			$jsonResult[$i]["tempat_lahir"] = $tableIds[$i]->tempat_lahir;
 			$jsonResult[$i]["agama"] = $tableIds[$i]->agama;
 			$jsonResult[$i]["jk"] = $tableIds[$i]->jk;
@@ -55,10 +57,12 @@ class Ckaryawan extends Controller
 			$jsonResult[$i]["tanggal_diangkat"] = $tableIds[$i]->tanggal_diangkat;
             
         }
-
+		
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
+		 
 				$res['message'] = "Success!";
 				$res['values'] = $jsonResult;
+				
 				$res = $this->paginate($jsonResult,$page);
 				return response($res);
 			}

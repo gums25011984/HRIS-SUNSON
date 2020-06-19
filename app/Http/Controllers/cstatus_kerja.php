@@ -11,8 +11,9 @@ class cstatus_kerja extends Controller
 			//
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
+			$sort = $request->sort;
 			$data = \App\Mstatus_kerja::where('status_kerja','like',"%".$search."%")
-			->orWhere('kdstatus_kerja', 'like', "%".$search."%")->paginate($page);
+			->orWhere('kdstatus_kerja', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
 			/*$data = \App\Mstatus_kerja::paginate($per_page);*/
 			
 		
