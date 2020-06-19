@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use App\mhak_akses;
 class Chak_akses extends Controller
 {
-	  public function index()
+	 public function index(Request $request)
 		{
 			//
-			$data = \App\mhak_akses::all();
+			$per_page = \Request::get('per_page') ?: 100;
+			$data = \App\mhak_akses::paginate($per_page);
+
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
