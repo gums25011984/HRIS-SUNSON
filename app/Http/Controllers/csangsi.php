@@ -12,8 +12,18 @@ class csangsi extends Controller
 			$page = \Request::get('page') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idsangsi';
-			$data = \App\Msangsi::where('sangsi','like',"%".$search."%")
-			->orWhere('kdsangsi', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
+			$data = \App\Msangsi::where('sangsi','like','%'.$search.'%')
+			->orWhere('kdsangsi', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate(1);
+			/*$lastPage = $data->lastPage();
+			if ($lastPage >= $page)
+			{$page = 1;}
+			else
+			{$page =$lastPage;}*/
+			/*$data = \App\Msangsi::where('sangsi','like','%'.$search.'%')
+			->orWhere('kdsangsi', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate(1);*/
+			
+			$data->appends($request->all());
+			
 			/*$data = \App\Msangsi::paginate($per_page);*/
 			
 		
@@ -22,7 +32,7 @@ class csangsi extends Controller
 				return response($data);
 			}
 			else{
-				$res['message'] = "Empty!";
+				$res['message'] = count($data);
 				return response($res);
 			}
 		}
