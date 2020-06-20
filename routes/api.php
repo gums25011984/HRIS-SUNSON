@@ -48,80 +48,88 @@ Route::get('/alat_kontrasepsi/delete/{id}','Calat_kontrasepsi@delete');
 
 //divisi
 Route::get('divisi','Cdivisi@index');
-/*Route::get('/divisi/{id}','Cdivisi@show')*/;
+Route::get('/divisi/show/{id}','Cdivisi@show');
 Route::post('/divisi/store','Cdivisi@store');
 Route::put('/divisi/update/{id}','Cdivisi@update');
 Route::get('/divisi/delete/{id}','Cdivisi@delete');
 
+//permission_role
+Route::get('permission_role','cpermission_role@index');
+Route::get('/permission_role/show/{id}','cpermission_role@show');
+Route::post('/permission_role/store','cpermission_role@store');
+Route::put('/permission_role/update/{id}','cpermission_role@update');
+Route::get('/permission_role/delete/{id}','cpermission_role@delete');
+
 //divisi
 Route::get('jabatan','cjabatan@index');
-/*Route::get('/jabatan/{id}','cjabatan@show');*/
+Route::get('/jabatan/show/{id}','cjabatan@show');
 Route::post('/jabatan/store','cjabatan@store');
 Route::put('/jabatan/update/{id}','cjabatan@update');
 Route::get('/jabatan/delete/{id}','cjabatan@delete');
 
 //pendidikan
 Route::get('pendidikan','cpendidikan@index');
-/*Route::get('/pendidikan/{id}','cpendidikan@show');*/
+Route::get('/pendidikan/show/{id}','cpendidikan@show');
 Route::post('/pendidikan/store','cpendidikan@store');
 Route::put('/pendidikan/update/{id}','cpendidikan@update');
 Route::get('/pendidikan/delete/{id}','cpendidikan@delete');
 
 //status_kerja
 Route::get('status_kerja','cstatus_kerja@index');
-/*Route::get('/status_kerja/{id}','cstatus_kerja@show');*/
+Route::get('/status_kerja/show/{id}','cstatus_kerja@show');
 Route::post('/status_kerja/store','cstatus_kerja@store');
 Route::put('/status_kerja/update/{id}','cstatus_kerja@update');
 Route::get('/status_kerja/delete/{id}','cstatus_kerja@delete');
 
 //status_pernikahan
 Route::get('status_pernikahan','cstatus_pernikahan@index');
-/*Route::get('/status_pernikahan/{id}','cstatus_pernikahan@show');*/
+Route::get('/status_pernikahan/show/{id}','cstatus_pernikahan@show');
 Route::post('/status_pernikahan/store','cstatus_pernikahan@store');
 Route::put('/status_pernikahan/update/{id}','cstatus_pernikahan@update');
 Route::get('/status_pernikahan/delete/{id}','cstatus_pernikahan@delete');
 
 //mgroup_kerja
 Route::get('mgroup_kerja','cmgroup_kerja@index');
-/*Route::get('/mgroup_kerja/{id}','cmgroup_kerja@show');*/
+Route::get('/mgroup_kerja/show/{id}','cmgroup_kerja@show');
 Route::post('/mgroup_kerja/store','cmgroup_kerja@store');
 Route::put('/mgroup_kerja/update/{id}','cmgroup_kerja@update');
 Route::get('/mgroup_kerja/delete/{id}','cmgroup_kerja@delete');
 
 //master_pelanggaran
 Route::get('master_pelanggaran','cmaster_pelanggaran@index');
-/*Route::get('/master_pelanggaran/{id}','cmaster_pelanggaran@show');*/
+Route::get('/master_pelanggaran/{id}','cmaster_pelanggaran@show');
 Route::post('/master_pelanggaran/store','cmaster_pelanggaran@store');
 Route::put('/master_pelanggaran/update/{id}','cmaster_pelanggaran@update');
 Route::get('/master_pelanggaran/delete/{id}','cmaster_pelanggaran@delete');
 
 //sangsi
 Route::get('sangsi','csangsi@index');
-/*Route::get('/sangsi/{id}','csangsi@show');*/
+Route::get('/sangsi/show/{id}','csangsi@show');
 Route::post('/sangsi/store','csangsi@store');
 Route::put('/sangsi/update/{id}','csangsi@update');
 Route::get('/sangsi/delete/{id}','csangsi@delete');
 
 //perijinan
 Route::get('perijinan','cperijinan@index');
-/*Route::get('/perijinan/{id}','cperijinan@show');*/
+Route::get('/perijinan/show/{id}','cperijinan@show');
 Route::post('/perijinan/store','cperijinan@store');
 Route::put('/perijinan/update/{id}','cperijinan@update');
 Route::get('/perijinan/delete/{id}','cperijinan@delete');
 
 //transportlembur
 Route::get('transportlembur','ctransportlembur@index');
-/*Route::get('/transportlembur/{id}','ctransportlembur@show');*/
+Route::get('/transportlembur/show/{id}','ctransportlembur@show');
 Route::post('/transportlembur/store','ctransportlembur@store');
 Route::put('/transportlembur/update/{id}','ctransportlembur@update');
 Route::get('/transportlembur/delete/{id}','ctransportlembur@delete');
 
 //karyawan
 Route::get('karyawan','ckaryawan@index');
-/*Route::get('/karyawan/show/{id}','ckaryawan@show');*/
+Route::get('/karyawan/show/{id}','ckaryawan@show');
 Route::post('/karyawan/store','ckaryawan@store');
 Route::put('/karyawan/update/{id}','ckaryawan@update');
 Route::get('/karyawan/delete/{id}','ckaryawan@delete');
+
 //combo form karyawan
 Route::get('/karyawan/propinsi','ckaryawan@propinsi');
 Route::get('/karyawan/kabupaten','ckaryawan@kabupaten');
@@ -164,7 +172,7 @@ Route::get('/pelanggaran/popup_karyawan','cpelanggaran@popup_karyawan');
 
 //parameter
 Route::get('parameter','cparameter@index');
-/*Route::get('/parameter/{id}','cparameter@show');*/
+Route::get('/parameter/show/{id}','cparameter@show');
 Route::post('/parameter/store','cparameter@store');
 Route::put('/parameter/update/{id}','cparameter@update');
 Route::get('/parameter/delete/{id}','cparameter@delete');
@@ -178,7 +186,7 @@ Route::get('/jadwal_kerja/delete/{id}','cjadwal_kerja@delete');
 
 //libur_nasional
 Route::get('libur_nasional','clibur_nasional@index');
-Route::get('/libur_nasional/{id}','clibur_nasional@show');
+Route::get('/libur_nasional/show/{id}','clibur_nasional@show');
 Route::post('/libur_nasional/store','clibur_nasional@store');
 Route::put('/libur_nasional/update/{id}','clibur_nasional@update');
 Route::get('/libur_nasional/delete/{id}','clibur_nasional@delete');
