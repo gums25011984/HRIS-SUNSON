@@ -28,15 +28,15 @@ class crole_permission extends Controller
 	LEFT JOIN sysappmenuitem AS d ON b.`fcode` = d.`code`  LEFT JOIN sysappmenu AS e ON e.`code` = d.`fcode`
 	LEFT JOIN tdepartemen AS f ON a.`iddepartemen` = f.`iddepartemen` LEFT JOIN tdivisi AS g ON a.`iddivisi` = g.`iddivisi`
 	
-WHERE idmenuitem IS NOT NULL and (a.idjabatan =  '$idjabatan' or a.iddepartemen =  '$iddepartemen' or a.iddivisi =  '$iddivisi')  "));
+WHERE idmenuitem IS NOT NULL and (a.idjabatan =  '$idjabatan' and a.iddepartemen =  '$iddepartemen' and a.iddivisi =  '$iddivisi')  "));
 				
         $jsonResult = array();
 
         for($i = 0;$i < count($tableIds);$i++)
         {
-		    $jsonResult[$i]["idaccess"] = $tableIds[$i]->idaccess;
-			$jsonResult[$i]["nameof"] = $tableIds[$i]->nameof;
-			$jsonResult[$i]["filename"] = $tableIds[$i]->filename;
+		    $jsonResult[$i]["id_permission"] = $tableIds[$i]->idaccess;
+			$jsonResult[$i]["name_permission"] = $tableIds[$i]->nameof;
+			$jsonResult[$i]["url_permission"] = $tableIds[$i]->filename;
 			$jsonResult[$i]["create"] = $tableIds[$i]->create;
 			$jsonResult[$i]["read"] = $tableIds[$i]->read;
 			$jsonResult[$i]["update"] = $tableIds[$i]->update;
@@ -46,12 +46,12 @@ WHERE idmenuitem IS NOT NULL and (a.idjabatan =  '$idjabatan' or a.iddepartemen 
             
         }
 
+
 		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
 				
-				$article = collect($jsonResult);
-				$article = $article->sortBy($sort);
-				$res = $this->paginate($article,$page);
-				return response($res);
+
+		
+        return $jsonResult;
 				
 			}
 			else{
@@ -61,11 +61,15 @@ WHERE idmenuitem IS NOT NULL and (a.idjabatan =  '$idjabatan' or a.iddepartemen 
 
 		}
 			
-		public function paginate($items,$page,$pageStart=1)
-		{
-			$page = \Request::get('page') ?: 100;
-			$currentPage = LengthAwarePaginator::resolveCurrentPage();
-			$currentResults = $items->slice(($currentPage - 1) * $page, $page)->all();
-			return new LengthAwarePaginator($currentResults, count($items), $page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-		}
+		public function paginate($items,$perPage=2,$pageStart=1)
+    {
+
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage; 
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+    }
 }
