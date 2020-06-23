@@ -12,8 +12,8 @@ class cslipgaji extends Controller
 	 public function index(Request $request)
 		{
 			$search = $request->search; 
-			$per_page = $request->per_page;
-			$pageStart = $request->page;
+			$perpage = $request->perpage;
+			$page = $request->page;
 			
 			$tableIds = DB::select("SELECT idslipgaji,bln,thn,periode,periodetglgaji,nik,nama,jabatan,departemen, divisi,kalender,hk,hl,mhk,mhl, qtyot,ot1,ot2,qtyotasli,status_kerja,gapok,tunj_jabatan,tunj_prestasi,premi_hadir,
 tunj_rajin,lembur, tunj_masakerja, premi_shift,transport_lembur,tunj_lainnya,totgaji, pot_absen,pot_astek, pot_spsi,pot_bisnis, pot_koperasi,
@@ -68,28 +68,26 @@ tot_potongan, gaji_bersih FROM tslipgaji where  (nama like '" . $search . "%' or
 			$jsonResult[$i]["gaji_bersih"] = $tableIds[$i]->gaji_bersih;
 			
 		 }
-		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
+		 if($jsonResult){ //mengecek apakah data kosong atau tidak
 				
-				$res = $this->paginate($jsonResult,$per_page,$pageStart);
-				return response($res);
+				$data = $this->paginate($jsonResult,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
 			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+			
 		
 		}
 		
-		public function paginate($items,$per_page,$pageStart)
-		{
-			$per_page = \Request::get('per_page') ?: 100;
-			// Start displaying items from this number;
-			$offSet = ($pageStart * $per_page) - $per_page; 
-	
-			// Get only the items you need using array_slice
-			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
-	
-			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-		}
+		public function paginate($items,$page,$perPage,$pageStart=1)
+    {
+
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage; 
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+    }
 		
 }

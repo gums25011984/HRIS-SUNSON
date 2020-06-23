@@ -13,9 +13,9 @@ class permintaan extends Controller
 
 	  public function index(Request $request)
 		{
-			
-		
-		$srch = $request->srch; 
+		    $search = $request->search; 
+			$perpage = $request->perpage;
+			$page = $request->page;
 	/*	$tableIds = DB::select( DB::raw("SELECT idjabatan,jabatan,'' as karyawan FROM tjabatan"));*/
 		$tableIds = DB::select( DB::raw("SELECT a.idkaryawan,a.pin,a.nik,a.noktp,a.nobpjs,a.bpjstk,a.nama,a.tempat_lahir,a.tanggal_lahir,a.agama,
 IF (a.jk = 'P', 'Perempuan','Laki-Laki') AS jk,
@@ -30,7 +30,7 @@ TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) AS umur,
 				LEFT JOIN regencies AS g ON a.idkota = g.id
 				LEFT JOIN provinces AS h ON a.idpropinsi = h.id
 				LEFT JOIN tmgroup_kerja AS i ON a.idgroup = i.idmgroup_kerja
-				LEFT JOIN tdivisi AS j ON a.iddivisi = j.iddivisi where nik like '$srch%' or nama like '$srch%'"));
+				LEFT JOIN tdivisi AS j ON a.iddivisi = j.iddivisi where nik like '$search%' or nama like '$search%'"));
         $jsonResult = array();
 		
 		
@@ -61,13 +61,13 @@ TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) AS umur,
         }
 
 		
-	    $data = $this->paginate($jsonResult);
-		
-        return $data;
+	   $data = $this->paginate($jsonResult,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
 		}
 
 		
-		public function paginate($items,$perPage=2,$pageStart=1)
+		public function paginate($items,$page,$perPage,$pageStart=1)
     {
 
         // Start displaying items from this number;

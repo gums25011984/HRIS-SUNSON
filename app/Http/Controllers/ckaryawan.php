@@ -60,7 +60,7 @@ class Ckaryawan extends Controller
 
 
 		 $data = $this->paginate($jsonResult,$page,$perpage);
-		
+		$data->appends($request->all());
         return $data;
 		}
 		

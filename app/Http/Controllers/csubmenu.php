@@ -12,8 +12,9 @@ class csubmenu extends Controller
 {
 	  public function index(Request $request)
 		{
-			$srch = $request->srch; 
-			$per_page = $request->per_page;
+			$page = \Request::get('page') ?: 100;
+			$perpage = \Request::get('perpage') ?: 100;
+			$search = $request->search;
 			
 			$tableIds = DB::select("SELECT a.idmenuitem,a.code,a.fcode,a.nameof,a.filename,a.icon,b.nameof AS menu,@no:=@no+1 AS heh 
 FROM sysappmenuitem AS a LEFT JOIN sysappmenu AS b ON a.fcode = b.code");
@@ -33,30 +34,26 @@ FROM sysappmenuitem AS a LEFT JOIN sysappmenu AS b ON a.fcode = b.code");
 
 			
 		 }
-		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $jsonResult;
-				$res = $this->paginate($jsonResult,$per_page);
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
+		 if($jsonResult){ //mengecek apakah data kosong atau tidak
+				
+				$data = $this->paginate($jsonResult,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
 			}
 		
 		}
 		
-		public function paginate($items,$per_page,$pageStart=1)
-		{
-			$per_page = \Request::get('per_page') ?: 100;
-			// Start displaying items from this number;
-			$offSet = ($pageStart * $per_page) - $per_page; 
-	
-			// Get only the items you need using array_slice
-			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
-	
-			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-		}
+		public function paginate($items,$page,$perPage,$pageStart=1)
+    {
+
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage; 
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+    }
 		
 		public function store(Request $request){
 		 $submenu = new \App\msubmenu();

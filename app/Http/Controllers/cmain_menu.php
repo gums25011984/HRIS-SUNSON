@@ -9,16 +9,17 @@ class cmain_menu extends Controller
 	  public function index(Request $request)
 		{
 			//
-			$per_page = \Request::get('per_page') ?: 100;
-			$data = \App\mmain_menu::paginate($per_page);
+			$page = \Request::get('page') ?: 100;
+			$perPage = \Request::get('perpage') ?: 100;
+			$search = $request->search;
+			$sort = \Request::get('sort') ?: 'idmenu';
+			$data = \App\mmain_menu::where('nameof','like',"%".$search."%")->orderby($sort, 'asc');
+			$data=$data->paginate($perPage=$perPage,$columns='*',$pageName='page',$page=$page);
 
 		
-			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
+			if($data){ //mengecek apakah data kosong atau tidak
+				$data->appends($request->all());
 				return response($data);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
 			}
 		}
 		

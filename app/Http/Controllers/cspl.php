@@ -12,8 +12,9 @@ class cspl extends Controller
 {
 	 public function index(Request $request)
 		{
-			$srch = $request->srch; 
-			$per_page = $request->per_page;
+			$page = \Request::get('page') ?: 100;
+			$perpage = \Request::get('perpage') ?: 100;
+			$search = $request->search;
 			
 			$tableIds = DB::select("SELECT a.idspl,a.`nospl`,a.tgl,b.nama AS leader,a.jam,a.`jam_mulai`,a.`jam_berakhir`,c.nama AS manager,a.acc,a. ket FROM tspl AS a LEFT JOIN tkaryawan AS b ON a.`permintaan_dari` = b.idkaryawan LEFT JOIN tkaryawan AS c ON a.`idmanager` = c.idkaryawan");
 		$jsonResult = array();
@@ -31,29 +32,27 @@ class cspl extends Controller
 			
 			
 		 }
-		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
+		if($jsonResult){ //mengecek apakah data kosong atau tidak
 				
-				$res = $this->paginate($jsonResult,$per_page);
-				return response($res);
+				$data = $this->paginate($jsonResult,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
 			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		
 		}
 		
-		public function paginate($items,$per_page,$pageStart=1)
-		{
-			$per_page = \Request::get('per_page') ?: 100;
-			// Start displaying items from this number;
-			$offSet = ($pageStart * $per_page) - $per_page; 
-	
-			// Get only the items you need using array_slice
-			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
-	
-			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-		}
+		
+		
+	public function paginate($items,$page,$perPage,$pageStart=1)
+    {
+
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage; 
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+    }
 		
 		public function store(Request $request){
 		  $spl = new \App\mspl();
@@ -183,30 +182,31 @@ class cspl extends Controller
 			}
 		}
 		
-		public function cmbspl()
-		{
+		public function cmbspl(Request $request)
+		{	
+			$page = \Request::get('page') ?: 100;
+			$perpage = \Request::get('perpage') ?: 100;
+			$search = $request->search;
 			$data = DB::select("select idpersplan,nama_persplan from tpersplan");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
+			if($data){ //mengecek apakah data kosong atau tidak
+				
+				$data = $this->paginate($data,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
 			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+		
 		}
-		public function popup_karyawan()
+		public function popup_karyawan(Request $request)
 		{
+			$page = \Request::get('page') ?: 100;
+			$perpage = \Request::get('perpage') ?: 100;
+			$search = $request->search;
 			$data = DB::select("select idkaryawan,nik,nama from tkaryawan");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
+			if($data){ //mengecek apakah data kosong atau tidak
+				
+				$data = $this->paginate($data,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
 			}
 		}
 }

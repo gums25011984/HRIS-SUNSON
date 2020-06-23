@@ -12,8 +12,9 @@ class cmutasi extends Controller
 {
 	  public function index(Request $request)
 		{
-			$srch = $request->srch; 
-			$per_page = $request->per_page;
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$perpage = \Request::get('perpage') ?: 10; 
 			
 			$tableIds = DB::select("SELECT a.idkaryawan,a.idmutasi,a.tgl,b.nik,b.nama ,c.departemen AS dept_awal,d.divisi AS 
 div_awal,e.jabatan AS jab_awal,f.departemen AS dept,g.divisi AS divisi,h.jabatan AS jabatan, a.ket,
@@ -26,7 +27,7 @@ LEFT JOIN tdivisi AS d ON a.iddivisi_asal = d.iddivisi
 LEFT JOIN tjabatan AS e ON a.idjabatan_asal = b.idjabatan
 LEFT JOIN tdepartemen AS f ON a.`iddepartemen_baru` = f.`iddepartemen`
 LEFT JOIN tdivisi AS g ON a.`iddivisi_baru` = g.`iddivisi`
-LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan");
+LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan where b.nama like '" . $search . "%' or b.nik like '" . $search . "%'");
 
 		$jsonResult = array();
 		
@@ -61,21 +62,18 @@ LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan");
 			$jsonResult[$i]["idjabatan_asal"] = $tableIds[$i]->idjabatan_asal;
 
 		 }
-		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
+		 if($jsonResult){ //mengecek apakah data kosong atau tidak
 				
-				$res = $this->paginate($jsonResult,$per_page);
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
+				$data = $this->paginate($jsonResult,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
 			}
 		
 		}
 		
-		public function paginate($items,$per_page,$pageStart=1)
+		public function paginate($items,$page,$perPage,$pageStart=1)
 		{
-			$per_page = \Request::get('per_page') ?: 100;
+			$per_page = $perPage;
 			// Start displaying items from this number;
 			$offSet = ($pageStart * $per_page) - $per_page; 
 	
@@ -226,45 +224,45 @@ LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan");
 		}
 		
 		
-		public function departement_baru()
+		public function departement_baru(Request $request)
 		{
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("select iddepartemen,departemen from tdepartemen");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
+			if($data){ //mengecek apakah data kosong atau tidak
+				
+				$data = $this->paginate($data,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
 			}
 		}
 		
-		public function divisi_baru()
+		public function divisi_baru(Request $request)
 		{
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("select iddivisi,divisi from tdivisi");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
+			if($data){ //mengecek apakah data kosong atau tidak
+				
+				$data = $this->paginate($data,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
 			}
 		}
 		
-		public function jabatan_baru()
+		public function jabatan_baru(Request $request)
 		{
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("select idjabatan,jabatan from tjabatan");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
+			if($data){ //mengecek apakah data kosong atau tidak
+				
+				$data = $this->paginate($data,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
 			}
 		}
 }

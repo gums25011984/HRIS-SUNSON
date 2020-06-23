@@ -10,30 +10,15 @@ class csangsi extends Controller
 		{
 			//
 			$page = \Request::get('page') ?: 100;
+			$perpage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idsangsi';
 			$data = \App\Msangsi::where('sangsi','like','%'.$search.'%')
-			->orWhere('kdsangsi', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate(1);
-			/*$lastPage = $data->lastPage();
-			if ($lastPage >= $page)
-			{$page = 1;}
-			else
-			{$page =$lastPage;}*/
-			/*$data = \App\Msangsi::where('sangsi','like','%'.$search.'%')
-			->orWhere('kdsangsi', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate(1);*/
-			
+			->orWhere('kdsangsi', 'like', "%".$search."%")->orderby($sort, 'asc');
+			$data=$data->paginate($perPage=$perpage,$columns='*',$pageName='page',$page=$page);
+			if($data){ //mengecek apakah data kosong atau tidak
 			$data->appends($request->all());
-			
-			/*$data = \App\Msangsi::paginate($per_page);*/
-			
-		
-			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
-				
 				return response($data);
-			}
-			else{
-				$res['message'] = count($data);
-				return response($res);
 			}
 		}
 		

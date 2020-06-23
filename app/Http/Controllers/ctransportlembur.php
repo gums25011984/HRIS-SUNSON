@@ -18,15 +18,11 @@ class ctransportlembur extends Controller
 			/*$data = \App\Mtransport_lembur::paginate($per_page);*/
 			
 		
-			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
+			if($data){ //mengecek apakah data kosong atau tidak
+			$data->appends($request->all());
+				return response($data);
 			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+			
 		}
 		
 		public function store(Request $request){

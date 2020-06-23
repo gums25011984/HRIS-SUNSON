@@ -13,12 +13,18 @@ class Chak_akses extends Controller
 			$data = \App\mhak_akses::paginate($per_page);
 
 		
-			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
+			$page = \Request::get('page') ?: 100;
+			$perPage = \Request::get('perpage') ?: 100;
+			$search = $request->search;
+			$sort = \Request::get('sort') ?: 'idjabatan';
+			$data = \App\mhak_akses::where('fcode','like',"%".$search."%")->orderby($sort, 'asc');
+			$data=$data->paginate($perPage=$perPage,$columns='*',$pageName='page',$page=$page);
+			/*$data = \App\Mtransport_lembur::paginate($per_page);*/
+			
+		
+			if($data){ //mengecek apakah data kosong atau tidak
+			$data->appends($request->all());
 				return response($data);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
 			}
 		}
 		

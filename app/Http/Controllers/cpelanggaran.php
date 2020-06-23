@@ -12,8 +12,9 @@ class cpelanggaran extends Controller
 {
 	  public function index(Request $request)
 		{
-			$srch = $request->srch; 
-			$per_page = $request->per_page;
+		$search = $request->search; 
+			$perpage = $request->perpage;
+			$page = $request->page;
 			
 			$tableIds = DB::select("SELECT a.idpelanggaran,a.tgl,b.nama AS karyawan,c.nama AS saksi,d.nama AS 
 		pelapor,e.master_pelanggaran AS pelanggaran,a.ket,CONCAT_WS('  -  ',a.tglmulai_sangsi, a.tglberakhir_sangsi) as berlaku, IF (a.status IS NULL OR status = '' OR status = '0','Aktif','Tidak Aktif') as status, f.sangsi
@@ -35,29 +36,26 @@ class cpelanggaran extends Controller
 			$jsonResult[$i]["sangsi"] = $tableIds[$i]->sangsi;
 			
 		 }
-		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
+		if($jsonResult){ //mengecek apakah data kosong atau tidak
 				
-				$res = $this->paginate($jsonResult,$per_page);
+				$res = $this->paginate($jsonResult,$page,$perpage);
 				return response($res);
 			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+			
 		
 		}
 		
-		public function paginate($items,$per_page,$pageStart=1)
-		{
-			$per_page = \Request::get('per_page') ?: 100;
-			// Start displaying items from this number;
-			$offSet = ($pageStart * $per_page) - $per_page; 
-	
-			// Get only the items you need using array_slice
-			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
-	
-			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-		}
+		public function paginate($items,$page,$perPage,$pageStart=1)
+    {
+
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage; 
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+    }
 		
 		
 		public function store(Request $request){
@@ -159,30 +157,26 @@ class cpelanggaran extends Controller
 			}
 		}
 		
-		public function cmbpelanggaran()
+		public function cmbpelanggaran(Request $request)
 		{
+			$search = $request->search; 
+			$perpage = $request->perpage;
+			$page = $request->page;
+			
 			$data = DB::select("select idmaster_pelanggaran,master_pelanggaran from tmaster_pelanggaran");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+			$data = $this->paginate($data,$page,$perpage);
+			
+		    $data->appends($request->all());
+			return response($data);
 		}
-		public function popup_karyawan()
+		public function popup_karyawan(Request $request)
 		{
+			$search = $request->search; 
+			$perpage = $request->perpage;
+			$page = $request->page;
 			$data = DB::select("select idkaryawan,nik,nama from tkaryawan");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+			$data = $this->paginate($data,$page,$perpage);
+		    $data->appends($request->all());
+			return response($data);
 		}
 }

@@ -12,15 +12,16 @@ class Cgapok extends Controller
 {
 	 public function index(Request $request)
 		{
-			$search = $request->search; 
-			$page = $request->page; 
+			$page = \Request::get('page') ?: 100;
+			$perpage = \Request::get('perpage') ?: 100;
+			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idgapok';
 			
-			$tableIds = DB::select("SELECT a.idkaryawan,b.idgapok,c.kdstatus_kerja,a.nik,a.nama, 
+			$tableIds = DB::select( DB::raw("SELECT a.idkaryawan,b.idgapok,c.kdstatus_kerja,a.nik,a.nama, 
 b.gaji_pokok,b.tunj_jabatan,b.tunj_prestasi,b.tunj_fungsional,b.tunj_hadir,b.tunj_rajin,
 b.tunj_masakerja,b.tunj_lainnya,
 b.pot_astek, b.pot_spsi,b.pot_koperasi,b.pot_bisnis FROM tkaryawan AS a LEFT JOIN tgapok AS b ON a.idkaryawan = b.idkaryawan
-left join tstatus_kerja as c ON a.idstatus_kerja = c.idstatus_kerja where a.nama like '" . $search . "%' or a.nik like '" . $search . "%' or a.jk like '" . $search . "%'    or c.kdstatus_kerja like '" . $search . "%'");
+left join tstatus_kerja as c ON a.idstatus_kerja = c.idstatus_kerja where a.nama like '" . $search . "%' or a.nik like '" . $search . "%' or a.jk like '" . $search . "%'    or c.kdstatus_kerja like '" . $search . "%'"));
 
 		$jsonResult = array();
 		
@@ -47,27 +48,24 @@ left join tstatus_kerja as c ON a.idstatus_kerja = c.idstatus_kerja where a.nama
 			$jsonResult[$i]["pot_bisnis"] = $tableIds[$i]->pot_bisnis;
 			
 		 }
-		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-				
-				$article = collect($jsonResult);
-				$article = $article->sortBy($sort);
-				$res = $this->paginate($article,$page);
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+		 $data = $this->paginate($jsonResult,$page,$perpage);
+		
+        return $data;
+		}
+		
+		
+		
+	public function paginate($items,$page,$perPage,$pageStart=1)
+    {
 
-		}
-			
-		public function paginate($items,$page,$pageStart=1)
-		{
-			$page = \Request::get('page') ?: 100;
-			$currentPage = LengthAwarePaginator::resolveCurrentPage();
-			$currentResults = $items->slice(($currentPage - 1) * $page, $page)->all();
-			return new LengthAwarePaginator($currentResults, count($items), $page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-		}
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage; 
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+    }
 		
 		public function store(Request $request){
 		 $gapok = new \App\mgapok();

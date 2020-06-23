@@ -13,8 +13,9 @@ class cijin extends Controller
 {
 	  public function index(Request $request)
 		{
-			$srch = $request->srch; 
-			$per_page = $request->per_page;
+			$search = $request->search; 
+			$perpage = $request->perpage;
+			$page = $request->page;
 		
 			$tableIds = DB::select("SELECT a.idijin,a.idperijinan,a.tgl,b.nama AS karyawan,a.tgl_keluar,a.jam_keluar,a.tgl_kembali,a.jam_kembali,a.ket,c.nama_perijinan
 FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left join tperijinan as c ON a.idperijinan = c.idperijinan");
@@ -34,9 +35,9 @@ FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left j
 			$jsonResult[$i]["nama_perijinan"] = $tableIds[$i]->nama_perijinan;
         }
 
-		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
+		 if($jsonResult){ //mengecek apakah data kosong atau tidak
 				
-				$res = $this->paginate($jsonResult,$per_page);
+				$res = $this->paginate($jsonResult,$page,$perpage);
 				return response($res);
 			}
 			else{
@@ -46,17 +47,17 @@ FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left j
 		}
 		
 		
-		public function paginate($items,$per_page,$pageStart=1)
-		{
-			$per_page = \Request::get('per_page') ?: 100;
-			// Start displaying items from this number;
-			$offSet = ($pageStart * $per_page) - $per_page; 
-	
-			// Get only the items you need using array_slice
-			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
-	
-			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-		}
+		public function paginate($items,$page,$perPage,$pageStart=1)
+    {
+
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage; 
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+    }
 		
 		
 		
@@ -199,30 +200,24 @@ FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left j
 			}
 		}
 		
-		public function cmbijin()
+		public function cmbijin(Request $request)
 		{
+			$search = $request->search; 
+			$perpage = $request->perpage;
+			$page = $request->page;
 			$data = DB::select("select idperijinan,nama_perijinan from tperijinan");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+		    $data = $this->paginate($data,$page,$perpage);
+		    $data->appends($request->all());
+			return response($data);
 		}
-		public function popup_karyawan()
+		public function popup_karyawan(Request $request)
 		{
+			$search = $request->search; 
+			$perpage = $request->perpage;
+			$page = $request->page;
 			$data = DB::select("select idkaryawan,nik,nama from tkaryawan");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+			$data = $this->paginate($data,$page,$perpage);
+		    $data->appends($request->all());
+			return response($data);
 		}
 }
