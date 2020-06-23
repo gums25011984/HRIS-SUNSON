@@ -65,7 +65,7 @@ WHERE idmenuitem IS NOT NULL and (a.idjabatan =  '$idjabatan' and a.iddepartemen
     {
 
         // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
+        $offSet = ($page* $perPage) - $perPage; 
 
         // Get only the items you need using array_slice
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);

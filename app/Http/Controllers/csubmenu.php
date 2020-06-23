@@ -34,7 +34,14 @@ FROM sysappmenuitem AS a LEFT JOIN sysappmenu AS b ON a.fcode = b.code");
 
 			
 		 }
-		 if($jsonResult){ //mengecek apakah data kosong atau tidak
+		 if($jsonResult>0){ //mengecek apakah data kosong atau tidak
+				
+				$data = $this->paginate($jsonResult,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
+			}
+			else
+			{ //mengecek apakah data kosong atau tidak
 				
 				$data = $this->paginate($jsonResult,$page,$perpage);
 				$data->appends($request->all());
@@ -47,7 +54,7 @@ FROM sysappmenuitem AS a LEFT JOIN sysappmenu AS b ON a.fcode = b.code");
     {
 
         // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
+        $offSet = ($page* $perPage) - $perPage; 
 
         // Get only the items you need using array_slice
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);

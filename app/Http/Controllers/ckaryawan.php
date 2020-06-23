@@ -59,9 +59,12 @@ class Ckaryawan extends Controller
         }
 
 
-		 $data = $this->paginate($jsonResult,$page,$perpage);
-		$data->appends($request->all());
-        return $data;
+		 if($jsonResult){ //mengecek apakah data kosong atau tidak
+				
+				$data = $this->paginate($jsonResult,$page,$perpage);
+				$data->appends($request->all());
+				return response($data);
+			}
 		}
 		
 		
@@ -70,7 +73,7 @@ class Ckaryawan extends Controller
     {
 
         // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
+        $offSet = ($page* $perPage) - $perPage; 
 
         // Get only the items you need using array_slice
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);

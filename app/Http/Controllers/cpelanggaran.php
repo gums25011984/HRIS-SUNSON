@@ -49,7 +49,7 @@ class cpelanggaran extends Controller
     {
 
         // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
+        $offSet = ($page* $perPage) - $perPage; 
 
         // Get only the items you need using array_slice
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
