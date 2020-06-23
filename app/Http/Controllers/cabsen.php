@@ -11,10 +11,12 @@ class cabsen extends Controller
 {
 	  public function index(Request $request)
 		{
-			$srch = $request->srch; 
-			$per_page = $request->per_page;
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$perpage = \Request::get('perpage') ?: 10; 
+		    $sort = \Request::get('sort') ?: 'idabsen';
 			
-			$tableIds = DB::select("SELECT a.idabsen,a.tgl_load,a.nik,b.nama,a.tgl_masuk,a.tgl_pulang,a.jam_masuk,a.jam_pulang, a.qtyotasli,a.premi_shift,a.jam_pulang,c.nospl,a.otstart,a.otend,a.ot1,a.ot2,a.qtyot,a.jam_wajib_masuk,a.jam_wajib_keluar,d.parameter,a.qty_jam,a.transport_lembur FROM tabsen AS a LEFT JOIN tkaryawan AS b ON a.nik = b.nik LEFT JOIN tspl AS c ON a.idspl = c.idspl LEFT JOIN tparameter AS d ON a.idparameter = d.idparameter");
+			$tableIds = DB::select("SELECT a.idabsen,a.tgl_load,a.nik,b.nama,a.tgl_masuk,a.tgl_pulang,a.jam_masuk,a.jam_pulang, a.qtyotasli,a.premi_shift,a.jam_pulang,c.nospl,a.otstart,a.otend,a.ot1,a.ot2,a.qtyot,a.jam_wajib_masuk,a.jam_wajib_keluar,d.parameter,a.qty_jam,a.transport_lembur FROM tabsen AS a LEFT JOIN tkaryawan AS b ON a.nik = b.nik LEFT JOIN tspl AS c ON a.idspl = c.idspl LEFT JOIN tparameter AS d ON a.idparameter = d.idparameter  where b.nama like '" . $search . "%' or a.nik like '" . $search . "%' ");
 
 		$jsonResult = array();
         for($i = 0;$i < count($tableIds);$i++)
@@ -40,28 +42,24 @@ class cabsen extends Controller
 			$jsonResult[$i]["qty_jam"] = $tableIds[$i]->qty_jam;
 			$jsonResult[$i]["transport_lembur"] = $tableIds[$i]->transport_lembur;
 		 }
-		 if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-				
-				$res = $this->paginate($jsonResult,$per_page);
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+		 
+		 $data = $this->paginate($jsonResult,$page,$perpage);
 		
+        return $data;
 		}
 		
-		public function paginate($items,$per_page,$pageStart=1)
-		{
-			$per_page = \Request::get('per_page') ?: 100;
-			// Start displaying items from this number;
-			$offSet = ($pageStart * $per_page) - $per_page; 
-	
-			// Get only the items you need using array_slice
-			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
-	
-			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-		}
+		
+		
+	public function paginate($items,$page,$perPage,$pageStart=1)
+    {
+
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage; 
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+    }
 		
 }

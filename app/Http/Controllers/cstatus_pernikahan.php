@@ -10,22 +10,20 @@ class cstatus_pernikahan extends Controller
 		{
 			//
 			$page = \Request::get('page') ?: 100;
+			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idstatus_pernikahan';
 			$data = \App\Mstatus_pernikahan::where('status_pernikahan','like',"%".$search."%")
-			->orWhere('kdstatus_pernikahan', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
+			->orWhere('kdstatus_pernikahan', 'like', "%".$search."%")->orderby($sort, 'asc');
+			$data=$data->paginate($perPage=$perPage,$columns='*',$pageName='page',$page=$page);
 			/*$data = \App\Mstatus_pernikahan::paginate($per_page);*/
 			
 		
-			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
+			if($data){ //mengecek apakah data kosong atau tidak
+				$data->appends($request->all());
+				return response($data);
 			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+			
 		}
 		
 		public function store(Request $request){

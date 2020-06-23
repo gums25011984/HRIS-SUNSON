@@ -10,20 +10,21 @@ class CAlat_Kontrasepsi extends Controller
 		{
 			//
 			$page = \Request::get('page') ?: 100;
+			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
-			$sort = \Request::get('sort') ?: 'idalat_kontrasepsi';
+		    $sort = \Request::get('sort') ?: 'alat_kontrasepsi';
+			
 			$data = \App\Malat_kontrasepsi::where('alat_kontrasepsi','like',"%".$search."%")
-			->orWhere('kdalat_kontrasepsi', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
+			->orWhere('kdalat_kontrasepsi', 'like', "%".$search."%")->orderby($sort, 'asc');
+			$data=$data->paginate($perPage=$perPage,$columns='*',$pageName='page',$page=$page);
 			/*$data = \App\Malat_kontrasepsi::paginate($per_page);*/
 			
 		
-			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
+			if($data){ //mengecek apakah data kosong atau tidak
+				$data->appends($request->all());
 				return response($data);
 			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+			
 		}
 		
 		public function store(Request $request){

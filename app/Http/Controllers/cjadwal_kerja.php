@@ -12,8 +12,9 @@ class cjadwal_kerja extends Controller
 {
 	   public function index(Request $request)
 		{
-			$search = $request->search; 
-			$page = $request->page; 
+			$page = \Request::get('page') ?: 100;
+			$search = $request->search;
+			$perpage = \Request::get('perpage') ?: 10; 
 			$sort = \Request::get('sort') ?: 'idjadwal_kerja';
 			$tableIds = DB::select("SELECT a.idjadwal_kerja,a.tgl,b.mgroup_kerja,c.parameter from tjadwal_kerja as a left join
 		tmgroup_kerja as b ON a.idmgroup_kerja = b.idmgroup_kerja left join tparameter as c on a.idparameter = c.idparameter where (c.parameter like '" . $search . "%' or b.mgroup_kerja like '" . $search . "%' )");
@@ -29,27 +30,24 @@ class cjadwal_kerja extends Controller
 			
 			
 		 }
-		if($jsonResult > 0){ //mengecek apakah data kosong atau tidak
-				
-				$article = collect($jsonResult);
-				$article = $article->sortBy($sort);
-				$res = $this->paginate($article,$page);
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+		 $data = $this->paginate($jsonResult,$page,$perpage);
+		
+        return $data;
+		}
+		
+		
+		
+	public function paginate($items,$page,$perPage,$pageStart=1)
+    {
 
-		}
-			
-		public function paginate($items,$page,$pageStart=1)
-		{
-			$page = \Request::get('page') ?: 100;
-			$currentPage = LengthAwarePaginator::resolveCurrentPage();
-			$currentResults = $items->slice(($currentPage - 1) * $page, $page)->all();
-			return new LengthAwarePaginator($currentResults, count($items), $page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-		}
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage; 
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+    }
 		
 		
 		public function store(Request $request){

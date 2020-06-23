@@ -11,20 +11,20 @@ class cparameter extends Controller
 		{
 			//
 			$page = \Request::get('page') ?: 100;
+			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idparameter';
 			$data = \App\Mparameter::where('parameter','like',"%".$search."%")
-			->orWhere('kdparameter', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
+			->orWhere('kdparameter', 'like', "%".$search."%")->orderby($sort, 'asc');
+			$data=$data->paginate($perPage=$perPage,$columns='*',$pageName='page',$page=$page);
 			/*$data = \App\Mparameter::paginate($per_page);*/
 			
 		
-			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
+			if($data){ //mengecek apakah data kosong atau tidak
+				$data->appends($request->all());
 				return response($data);
 			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+			
 		}
 		
 		

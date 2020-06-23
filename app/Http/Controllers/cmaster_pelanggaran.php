@@ -9,20 +9,20 @@ class cmaster_pelanggaran extends Controller
 	 public function index(Request $request)
 		{
 			$page = \Request::get('page') ?: 100;
+			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idmaster_pelanggaran';
 			$data = \App\Mmaster_pelanggaran::where('master_pelanggaran','like',"%".$search."%")
-			->orWhere('kdmaster_pelanggaran', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
+			->orWhere('kdmaster_pelanggaran', 'like', "%".$search."%")->orderby($sort, 'asc');
+			$data=$data->paginate($perPage=$perPage,$columns='*',$pageName='page',$page=$page);
 			/*$data = \App\Mmaster_pelanggaran::paginate($per_page);*/
 			
 		
-			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
+			if($data){ //mengecek apakah data kosong atau tidak
+				$data->appends($request->all());
 				return response($data);
 			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+	
 		}
 		
 		public function store(Request $request){

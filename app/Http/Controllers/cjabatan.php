@@ -10,20 +10,20 @@ class cjabatan extends Controller
 		{
 			//
 			$page = \Request::get('page') ?: 100;
+			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idjabatan';
 			$data = \App\Mjabatan::where('jabatan','like',"%".$search."%")
-			->orWhere('kdjabatan', 'like', "%".$search."%")->orderby($sort, 'asc')->paginate($page);
+			->orWhere('kdjabatan', 'like', "%".$search."%")->orderby($sort, 'asc');
+			$data=$data->paginate($perPage=$perPage,$columns='*',$pageName='page',$page=$page);
 			/*$data = \App\Mjabatan::paginate($per_page);*/
 			
 		
-			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
+			if($data){ //mengecek apakah data kosong atau tidak
+				$data->appends($request->all());
 				return response($data);
 			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+	
 		}
 		
 		public function store(Request $request){

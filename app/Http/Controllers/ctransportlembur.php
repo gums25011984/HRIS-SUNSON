@@ -10,9 +10,11 @@ class ctransportlembur extends Controller
 		{
 			//
 			$page = \Request::get('page') ?: 100;
+			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'jurusan';
-			$data = \App\Mtransportlembur::where('jurusan','like',"%".$search."%")->orderby($sort, 'asc')->paginate($page);
+			$data = \App\Mtransportlembur::where('jurusan','like',"%".$search."%")->orderby($sort, 'asc');
+			$data=$data->paginate($perPage=$perPage,$columns='*',$pageName='page',$page=$page);
 			/*$data = \App\Mtransport_lembur::paginate($per_page);*/
 			
 		
