@@ -73,7 +73,7 @@ class Ckaryawan extends Controller
     {
 
         // Start displaying items from this number;
-        $offSet = ($page* $perPage) - $perPage; 
+        $offSet = ($pageStart* $perPage) - $perPage; 
 
         // Get only the items you need using array_slice
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);

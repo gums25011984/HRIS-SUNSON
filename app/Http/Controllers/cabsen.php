@@ -54,7 +54,7 @@ class cabsen extends Controller
     {
 
         // Start displaying items from this number;
-        $offSet = ($page * $perPage) - $perPage; // Get only the items you need using array_slice
+        $offSet = ($pageStart * $perPage) - $perPage; // Get only the items you need using array_slice
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
 
         return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
