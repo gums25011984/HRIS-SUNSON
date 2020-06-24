@@ -14,7 +14,7 @@ class cmutasi extends Controller
 		{
 			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
-			$perpage = \Request::get('perpage') ?: 10; 
+			$perPage = \Request::get('perpage') ?: 10; 
 			
 			$tableIds = DB::select("SELECT a.idkaryawan,a.idmutasi,a.tgl,b.nik,b.nama ,c.departemen AS dept_awal,d.divisi AS 
 div_awal,e.jabatan AS jab_awal,f.departemen AS dept,g.divisi AS divisi,h.jabatan AS jabatan, a.ket,
@@ -29,59 +29,18 @@ LEFT JOIN tdepartemen AS f ON a.`iddepartemen_baru` = f.`iddepartemen`
 LEFT JOIN tdivisi AS g ON a.`iddivisi_baru` = g.`iddivisi`
 LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan where b.nama like '" . $search . "%' or b.nik like '" . $search . "%'");
 
-		$jsonResult = array();
-		
-		for($i = 0;$i < count($tableIds);$i++)
-        {
-			$jsonResult[$i]["idkaryawan"] = $tableIds[$i]->idkaryawan;
-			$jsonResult[$i]["idmutasi"] = $tableIds[$i]->idmutasi;
-			$jsonResult[$i]["tgl"] = $tableIds[$i]->tgl;
-			$jsonResult[$i]["nik"] = $tableIds[$i]->nik;
-			$jsonResult[$i]["nama"] = $tableIds[$i]->nama;
-			$jsonResult[$i]["dept_awal"] = $tableIds[$i]->dept_awal;
-			$jsonResult[$i]["div_awal"] = $tableIds[$i]->div_awal;
-			$jsonResult[$i]["jab_awal"] = $tableIds[$i]->jab_awal;
-			$jsonResult[$i]["dept"] = $tableIds[$i]->dept;
-			
-			$jsonResult[$i]["divisi"] = $tableIds[$i]->divisi;
-			$jsonResult[$i]["jabatan"] = $tableIds[$i]->jabatan;
-			$jsonResult[$i]["ket"] = $tableIds[$i]->ket;
-			$jsonResult[$i]["nmkadep"] = $tableIds[$i]->nmkadep;
-
-			$jsonResult[$i]["tglacckadep"] = $tableIds[$i]->tglacckadep;
-			$jsonResult[$i]["nmhrd"] = $tableIds[$i]->nmhrd;
-			$jsonResult[$i]["tglacchrd"] = $tableIds[$i]->tglacchrd;
-			$jsonResult[$i]["nmdirektur"] = $tableIds[$i]->nmdirektur;
-
-			$jsonResult[$i]["tglaccdirektur"] = $tableIds[$i]->tglaccdirektur;
-			$jsonResult[$i]["iddepartemen_baru"] = $tableIds[$i]->iddepartemen_baru;
-			$jsonResult[$i]["iddivisi_baru"] = $tableIds[$i]->iddivisi_baru;
-			$jsonResult[$i]["idjabatan_baru"] = $tableIds[$i]->idjabatan_baru;
-			$jsonResult[$i]["iddepartemen_asal"] = $tableIds[$i]->iddepartemen_asal;
-			$jsonResult[$i]["iddivisi_asal"] = $tableIds[$i]->iddivisi_asal;
-			$jsonResult[$i]["idjabatan_asal"] = $tableIds[$i]->idjabatan_asal;
-
-		 }
-		 if($jsonResult){ //mengecek apakah data kosong atau tidak
-				
-				$data = $this->paginate($jsonResult,$page,$perpage);
-				$data->appends($request->all());
-				return response($data);
-			}
-		
+			$data=$this->paginate($tableIds,$perPage);
+			$data->appends($request->all());
+			return($data);
 		}
 		
-		public function paginate($items,$page,$perPage,$pageStart=1)
-		{
-			$per_page = $perPage;
-			// Start displaying items from this number;
-			$offSet = ($pageStart * $per_page) - $per_page; 
-	
-			// Get only the items you need using array_slice
-			$itemsForCurrentPage = array_slice($items, $offSet, $per_page, true);
-	
-			return new LengthAwarePaginator($itemsForCurrentPage, count($items), $per_page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-		}
+		 public function paginate($items, $perPage, $page = null, $options = [])
+    {
+        $page = $page ?: (\Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof \Illuminate\Support\Collection ? $items : \Illuminate\Support\Collection::make($items);
+        return new \Illuminate\Pagination\LengthAwarePaginator(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, array('path' => Paginator::resolveCurrentPath()));
+        //ref for array_values() fix: https://stackoverflow.com/a/38712699/3553367
+    }		
 		
 		public function store(Request $request){
 		  $mutasi = new \App\mmutasi();
@@ -228,11 +187,11 @@ LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan where b.nama like '"
 		{
 			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
-			$perpage = \Request::get('perpage') ?: 10; 
+			$perPage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("select iddepartemen,departemen from tdepartemen");
 			if($data){ //mengecek apakah data kosong atau tidak
 				
-				$data = $this->paginate($data,$page,$perpage);
+				$data = $this->paginate($data,$perPage);
 				$data->appends($request->all());
 				return response($data);
 			}
@@ -242,11 +201,11 @@ LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan where b.nama like '"
 		{
 			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
-			$perpage = \Request::get('perpage') ?: 10; 
+			$perPage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("select iddivisi,divisi from tdivisi");
 			if($data){ //mengecek apakah data kosong atau tidak
 				
-				$data = $this->paginate($data,$page,$perpage);
+				$data = $this->paginate($data,$perPage);
 				$data->appends($request->all());
 				return response($data);
 			}
@@ -256,11 +215,11 @@ LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan where b.nama like '"
 		{
 			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
-			$perpage = \Request::get('perpage') ?: 10; 
+			$perPage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("select idjabatan,jabatan from tjabatan");
 			if($data){ //mengecek apakah data kosong atau tidak
 				
-				$data = $this->paginate($data,$page,$perpage);
+				$data = $this->paginate($data,$perPage);
 				$data->appends($request->all());
 				return response($data);
 			}

@@ -13,7 +13,7 @@ class cpelanggaran extends Controller
 	  public function index(Request $request)
 		{
 		$search = $request->search; 
-			$perpage = $request->perpage;
+			$perPage = $request->perpage;
 			$page = $request->page;
 			
 			$tableIds = DB::select("SELECT a.idpelanggaran,a.tgl,b.nama AS karyawan,c.nama AS saksi,d.nama AS 
@@ -22,39 +22,17 @@ class cpelanggaran extends Controller
 		c.idkaryawan LEFT JOIN tkaryawan AS d ON d.idkaryawan = a.pelapor 
 		LEFT JOIN tmaster_pelanggaran AS e ON a.idmaster_pelanggaran = e.idmaster_pelanggaran left join tsangsi as f On a.idsangsi = f.idsangsi");
 
-		$jsonResult = array();
-		
-		for($i = 0;$i < count($tableIds);$i++)
-        {
-			$jsonResult[$i]["idpelanggaran"] = $tableIds[$i]->idpelanggaran;
-			$jsonResult[$i]["tgl"] = $tableIds[$i]->tgl;
-			$jsonResult[$i]["karyawan"] = $tableIds[$i]->karyawan;
-			$jsonResult[$i]["pelanggaran"] = $tableIds[$i]->pelanggaran;
-			$jsonResult[$i]["ket"] = $tableIds[$i]->ket;
-			$jsonResult[$i]["berlaku"] = $tableIds[$i]->berlaku;
-			$jsonResult[$i]["status"] = $tableIds[$i]->status;
-			$jsonResult[$i]["sangsi"] = $tableIds[$i]->sangsi;
-			
-		 }
-		if($jsonResult){ //mengecek apakah data kosong atau tidak
-				
-				$res = $this->paginate($jsonResult,$page,$perpage);
-				return response($res);
-			}
-			
-		
+			$data=$this->paginate($tableIds,$perPage);
+			$data->appends($request->all());
+			return($data);
 		}
 		
-		public function paginate($items,$page,$perPage,$pageStart=1)
+		 public function paginate($items, $perPage, $page = null, $options = [])
     {
-
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
-
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
-
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+        $page = $page ?: (\Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof \Illuminate\Support\Collection ? $items : \Illuminate\Support\Collection::make($items);
+        return new \Illuminate\Pagination\LengthAwarePaginator(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, array('path' => Paginator::resolveCurrentPath()));
+        //ref for array_values() fix: https://stackoverflow.com/a/38712699/3553367
     }
 		
 		
@@ -160,11 +138,11 @@ class cpelanggaran extends Controller
 		public function cmbpelanggaran(Request $request)
 		{
 			$search = $request->search; 
-			$perpage = $request->perpage;
+			$perPage = $request->perpage;
 			$page = $request->page;
 			
 			$data = DB::select("select idmaster_pelanggaran,master_pelanggaran from tmaster_pelanggaran");
-			$data = $this->paginate($data,$page,$perpage);
+			$data = $this->paginate($data,$perPage);
 			
 		    $data->appends($request->all());
 			return response($data);
@@ -172,10 +150,10 @@ class cpelanggaran extends Controller
 		public function popup_karyawan(Request $request)
 		{
 			$search = $request->search; 
-			$perpage = $request->perpage;
+			$perPage = $request->perpage;
 			$page = $request->page;
 			$data = DB::select("select idkaryawan,nik,nama from tkaryawan");
-			$data = $this->paginate($data,$page,$perpage);
+			$data = $this->paginate($data,$perPage);
 		    $data->appends($request->all());
 			return response($data);
 		}

@@ -11,7 +11,7 @@ class cdashboard extends Controller
 {
 	  public function index(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$data = DB::select("SELECT  a.idspl,a.tgl,a.nospl,CONCAT(jam_mulai, ' ', jam_berakhir) AS jam,b.nama
@@ -32,7 +32,7 @@ class cdashboard extends Controller
 		}
 		public function approved(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 			$data = DB::select("SELECT  a.idspl,a.tgl,a.nospl,CONCAT(jam_mulai, ' ', jam_berakhir) AS jam,b.nama
 										FROM tspl AS a LEFT JOIN tkaryawan AS b ON b.idkaryawan = a.permintaan_dari where a.acc ='1'");
@@ -52,7 +52,7 @@ class cdashboard extends Controller
 		
 		public function reject()
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 			$data = DB::select("SELECT  a.idspl,a.tgl,a.nospl,CONCAT(jam_mulai, ' ', jam_berakhir) AS jam,b.nama
 										FROM tspl AS a LEFT JOIN tkaryawan AS b ON b.idkaryawan = a.permintaan_dari where a.acc ='2' ");
@@ -72,7 +72,7 @@ class cdashboard extends Controller
 		
 		public function kesiangan()
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 			
 			$data = DB::select("SELECT DISTINCT a.tgl_masuk,a.nik,b.nama,c.departemen,a.jam_masuk,
@@ -92,7 +92,7 @@ class cdashboard extends Controller
 		}
 		public function mangkir()
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 
 			$data = DB::select("SELECT CURRENT_DATE() as tgl,a.nik,a.nama,departemen,tgl_masuk FROM (
@@ -118,7 +118,7 @@ class cdashboard extends Controller
 		
 		public function pelanggaran_baru()
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 			
 			$data = DB::select("SELECT  a.tgl,b.nik,b.nama,c.departemen,d.sangsi 
@@ -141,7 +141,7 @@ class cdashboard extends Controller
 		
 		public function pelanggaran_aktif()
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 
 			$data = DB::select("SELECT  a.tgl,b.nik,b.nama,c.departemen,d.sangsi 
@@ -164,7 +164,7 @@ class cdashboard extends Controller
 		public function habis_kontrak()
 		{
 			
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 
 			$data = DB::select("SELECT 		a.idkaryawan,a.pin,a.nik,a.noktp,a.nobpjs,a.bpjstk,a.nama,a.tempat_lahir,a.tanggal_lahir,a.agama,a.jk,a.jmlcuti,f.name,

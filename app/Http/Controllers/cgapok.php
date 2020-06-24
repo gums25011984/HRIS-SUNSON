@@ -23,44 +23,18 @@ b.tunj_masakerja,b.tunj_lainnya,
 b.pot_astek, b.pot_spsi,b.pot_koperasi,b.pot_bisnis FROM tkaryawan AS a LEFT JOIN tgapok AS b ON a.idkaryawan = b.idkaryawan
 left join tstatus_kerja as c ON a.idstatus_kerja = c.idstatus_kerja where a.nama like '" . $search . "%' or a.nik like '" . $search . "%' or a.jk like '" . $search . "%'    or c.kdstatus_kerja like '" . $search . "%'"));
 
-		$jsonResult = array();
-		
-		for($i = 0;$i < count($tableIds);$i++)
-        {
-			$jsonResult[$i]["idkaryawan"] = $tableIds[$i]->idkaryawan;
-			$jsonResult[$i]["idgapok"] = $tableIds[$i]->idgapok;
-			$jsonResult[$i]["kdstatus_kerja"] = $tableIds[$i]->kdstatus_kerja;
-			$jsonResult[$i]["nik"] = $tableIds[$i]->nik;
-			$jsonResult[$i]["nama"] = $tableIds[$i]->nama;
-			$jsonResult[$i]["gaji_pokok"] = $tableIds[$i]->gaji_pokok;
-			$jsonResult[$i]["tunj_jabatan"] = $tableIds[$i]->tunj_jabatan;
-			
-			$jsonResult[$i]["tunj_prestasi"] = $tableIds[$i]->tunj_prestasi;
-			$jsonResult[$i]["tunj_fungsional"] = $tableIds[$i]->tunj_fungsional;
-			$jsonResult[$i]["tunj_hadir"] = $tableIds[$i]->tunj_hadir;
-			$jsonResult[$i]["tunj_rajin"] = $tableIds[$i]->tunj_rajin;
-			$jsonResult[$i]["tunj_masakerja"] = $tableIds[$i]->tunj_masakerja;
-			$jsonResult[$i]["tunj_lainnya"] = $tableIds[$i]->tunj_lainnya;
-			$jsonResult[$i]["pot_astek"] = $tableIds[$i]->pot_astek;
-			
-			$jsonResult[$i]["pot_spsi"] = $tableIds[$i]->pot_spsi;
-			$jsonResult[$i]["pot_koperasi"] = $tableIds[$i]->pot_koperasi;
-			$jsonResult[$i]["pot_bisnis"] = $tableIds[$i]->pot_bisnis;
-			
-		 }
-		$collect = collect($jsonResult);
-			return $paginationData = new LengthAwarePaginator(
-                         $collect->forPage($page, $perPage),
-                         $collect->count(), 
-                         $page, 
-                         $perPage,
-						[
-							'path' => LengthAwarePaginator::resolveCurrentPath(),
-							'pageName' => 'page',
-						]
-                       );
+		$data=$this->paginate($tableIds,$perPage);
+		$data->appends($request->all());
+		return($data);
 		}
 		
+		 public function paginate($items, $perPage, $page = null, $options = [])
+    {
+        $page = $page ?: (\Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof \Illuminate\Support\Collection ? $items : \Illuminate\Support\Collection::make($items);
+        return new \Illuminate\Pagination\LengthAwarePaginator(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, array('path' => Paginator::resolveCurrentPath()));
+        //ref for array_values() fix: https://stackoverflow.com/a/38712699/3553367
+    }		
 		
 		
 	

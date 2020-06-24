@@ -14,7 +14,7 @@ class cpribadiprofile extends Controller
 		{
 			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
-			$perpage = \Request::get('perpage') ?: 10; 
+			$perPage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("SELECT 		a.idkaryawan,a.pin,a.nik,a.noktp,a.nobpjs,a.bpjstk,a.nama,CONCAT_WS(' - ',a.tempat_lahir,a.tanggal_lahir) as lahir,a.agama,a.jk,a.jmlcuti,f.name,a.photo,
 				CONCAT_WS(' ',a.alamat, e.name ,f.name,g.name ,h.name) as alt,CONCAT_WS(' / ',a.tlp,a.hp) as tlp,j.divisi,
 				b.pendidikan,c.jabatan,d.departemen,i.mgroup_kerja ,a.jobdesk,a.tanggal_masuk,a.tanggal_keluar,a.`tanggal_diangkat`
@@ -28,30 +28,25 @@ class cpribadiprofile extends Controller
 				left join tmgroup_kerja as i on a.idgroup = i.idmgroup_kerja
 				left join tdivisi as j on a.iddivisi = j.iddivisi");
 
-			if($data){ //mengecek apakah data kosong atau tidak
-				
-				$data = $this->paginate($data,$page,$perpage);
-				return response($data);
-			}
+			$data=$this->paginate($data,$perPage);
+			$data->appends($request->all());
+			return($data);
 		}
 		
-		public function paginate($items,$page,$perPage,$pageStart=1)
+		 public function paginate($items, $perPage, $page = null, $options = [])
     {
-
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
-
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
-
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
+        $page = $page ?: (\Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof \Illuminate\Support\Collection ? $items : \Illuminate\Support\Collection::make($items);
+        return new \Illuminate\Pagination\LengthAwarePaginator(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, array('path' => Paginator::resolveCurrentPath()));
+        //ref for array_values() fix: https://stackoverflow.com/a/38712699/3553367
     }
+    
 		
 		public function pribadi_cuti_diambil(Request $request)
 		{	
 			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
-			$perpage = \Request::get('perpage') ?: 10; 
+			$perPage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("SELECT a.idkaryawan,a.tgl,c.nama_perijinan,a.tgl_keluar,a.tgl_kembali,b.qty
 			FROM tijin AS a LEFT JOIN tperijinan AS c ON a.`idperijinan` = c.`idperijinan`
 			LEFT JOIN
@@ -60,24 +55,16 @@ class cpribadiprofile extends Controller
 			) AS b ON a.`idijin` = b.idijin 
 			WHERE (a.`idperijinan` IN (19,25,26))");
 
-			if($data){ //mengecek apakah data kosong atau tidak
-				
-				$data = $this->paginate($data,$page,$perpage);
-				return response($data);
-			}
-			else
-			{ //mengecek apakah data kosong atau tidak
-				
-				$data = $this->paginate($data,$page,$perpage);
-				return response($data);
-			}
+			$data=$this->paginate($data,$perPage);
+			$data->appends($request->all());
+			return($data);
 		}
 		
 		public function pribadi_cuti(Request $request)
 		{
 			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
-			$perpage = \Request::get('perpage') ?: 10; 
+			$perPage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("SELECT a.idkaryawan,a.nik,a.nama,IFNULL(e.penggunaan_cuti,0) AS cuti_digunakan,IFNULL(c.cuti_darilembur,0) AS cuti_darilembur,
 		IFNULL(t1.cutitahunan,0) AS cutitahunan,IFNULL(b.cutikip,0) AS cutikip,IFNULL(d.cutiip,0) AS cutiip,
 		IFNULL(c.cuti_darilembur,0) + IFNULL(t1.cutitahunan,0) + IFNULL(b.cutikip,0) + IFNULL(d.cutiip,0) AS jmlcuti,
@@ -100,18 +87,16 @@ class cpribadiprofile extends Controller
 			  GROUP BY c.idkaryawan
 			 ) AS e ON a.idkaryawan  = e.idkaryawan  limit 1000 ");
 			
-			if($data){ //mengecek apakah data kosong atau tidak
-				
-				$data = $this->paginate($data,$page,$perpage);
-				return response($data);
-			}
+			$data=$this->paginate($data,$perPage);
+			$data->appends($request->all());
+			return($data);
 		}
 		
 		public function pribadi_ppkl(Request $request)
 		{
 			$page = \Request::get('page') ?: 1;
 				$search = $request->search;
-				$perpage = \Request::get('perpage') ?: 10; 
+				$perPage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("SELECT  a.idspl,a.tgl,a.nospl,CONCAT(jam_mulai, ' - ', jam_berakhir) AS jam,b.nama,
 				CASE
 				WHEN a.acc = '0' THEN 'Prosess'
@@ -120,18 +105,9 @@ class cpribadiprofile extends Controller
 				WHEN a.acc = '2' THEN 'Ditolak'
 				END  AS acc
 				FROM tspl AS a LEFT JOIN tkaryawan AS b ON b.idkaryawan = a.permintaan_dari left join tspldtl as d on a.nospl = d.nospl");
-			if($data){ //mengecek apakah data kosong atau tidak
-				$data = $this->paginate($data,$page,$perpage);
-				$data->appends($request->all());
-				return response($data);
-			}
-			else
-			{ //mengecek apakah data kosong atau tidak
-				
-				$data = $this->paginate($data,$page,$perpage);
-				$data->appends($request->all());
-				return response($data);
-			}
+			$data=$this->paginate($data,$perPage);
+			$data->appends($request->all());
+			return($data);
 		}
 		
 }

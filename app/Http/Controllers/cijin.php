@@ -14,50 +14,24 @@ class cijin extends Controller
 	  public function index(Request $request)
 		{
 			$search = $request->search; 
-			$perpage = $request->perpage;
+			$perPage = $request->perpage;
 			$page = $request->page;
 		
 			$tableIds = DB::select("SELECT a.idijin,a.idperijinan,a.tgl,b.nama AS karyawan,a.tgl_keluar,a.jam_keluar,a.tgl_kembali,a.jam_kembali,a.ket,c.nama_perijinan
 FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left join tperijinan as c ON a.idperijinan = c.idperijinan");
 
-		$jsonResult = array();
-        for($i = 0;$i < count($tableIds);$i++)
-        {
-			$jsonResult[$i]["idijin"] = $tableIds[$i]->idijin;
-			$jsonResult[$i]["idperijinan"] = $tableIds[$i]->idperijinan;
-			$jsonResult[$i]["tgl"] = $tableIds[$i]->tgl;
-			$jsonResult[$i]["karyawan"] = $tableIds[$i]->karyawan;
-			$jsonResult[$i]["tgl_keluar"] = $tableIds[$i]->tgl_keluar;
-			$jsonResult[$i]["jam_keluar"] = $tableIds[$i]->jam_keluar;
-			$jsonResult[$i]["tgl_kembali"] = $tableIds[$i]->tgl_kembali;
-			$jsonResult[$i]["jam_kembali"] = $tableIds[$i]->jam_kembali;
-			$jsonResult[$i]["ket"] = $tableIds[$i]->ket;
-			$jsonResult[$i]["nama_perijinan"] = $tableIds[$i]->nama_perijinan;
-        }
-
-		 if($jsonResult){ //mengecek apakah data kosong atau tidak
-				
-				$res = $this->paginate($jsonResult,$page,$perpage);
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
+		$data=$this->paginate($tableIds,$perPage);
+		$data->appends($request->all());
+		return($data);
 		}
 		
-		
-		public function paginate($items,$page,$perPage,$pageStart=1)
+		 public function paginate($items, $perPage, $page = null, $options = [])
     {
-
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
-
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
-
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-    }
+        $page = $page ?: (\Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof \Illuminate\Support\Collection ? $items : \Illuminate\Support\Collection::make($items);
+        return new \Illuminate\Pagination\LengthAwarePaginator(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, array('path' => Paginator::resolveCurrentPath()));
+        //ref for array_values() fix: https://stackoverflow.com/a/38712699/3553367
+    }		
 		
 		
 		
@@ -203,20 +177,20 @@ FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left j
 		public function cmbijin(Request $request)
 		{
 			$search = $request->search; 
-			$perpage = $request->perpage;
+			$perPage = $request->perpage;
 			$page = $request->page;
 			$data = DB::select("select idperijinan,nama_perijinan from tperijinan");
-		    $data = $this->paginate($data,$page,$perpage);
+		    $data = $this->paginate($data,$perPage);
 		    $data->appends($request->all());
 			return response($data);
 		}
 		public function popup_karyawan(Request $request)
 		{
 			$search = $request->search; 
-			$perpage = $request->perpage;
+			$perPage = $request->perpage;
 			$page = $request->page;
 			$data = DB::select("select idkaryawan,nik,nama from tkaryawan");
-			$data = $this->paginate($data,$page,$perpage);
+			$data = $this->paginate($data,$perPage);
 		    $data->appends($request->all());
 			return response($data);
 		}

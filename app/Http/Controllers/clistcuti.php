@@ -13,7 +13,7 @@ class clistcuti extends Controller
 		{
 			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
-			$perpage = \Request::get('perpage') ?: 10; 
+			$perPage = \Request::get('perpage') ?: 10; 
 			
 			$tableIds = DB::select("SELECT a.idkaryawan,a.nik,a.nama,IFNULL(e.penggunaan_cuti,0) AS cuti_digunakan,IFNULL(c.cuti_darilembur,0) AS cuti_darilembur,
 		IFNULL(t1.cutitahunan,0) AS cutitahunan,IFNULL(b.cutikip,0) AS cutikip,IFNULL(d.cutiip,0) AS cutiip,
@@ -37,42 +37,21 @@ class clistcuti extends Controller
 			  GROUP BY c.idkaryawan
 			 ) AS e ON a.idkaryawan  = e.idkaryawan where a.nik like '$search%'");
 
-			$jsonResult = array();
-		
-		for($i = 0;$i < count($tableIds);$i++)
-        {
-			
-			$jsonResult[$i]["idkaryawan"] = $tableIds[$i]->idkaryawan;
-			$jsonResult[$i]["nik"] = $tableIds[$i]->nik;
-			$jsonResult[$i]["nama"] = $tableIds[$i]->nama;
-			$jsonResult[$i]["cuti_digunakan"] = $tableIds[$i]->cuti_digunakan;
-			$jsonResult[$i]["cuti_darilembur"] = $tableIds[$i]->cuti_darilembur;
-			$jsonResult[$i]["cutitahunan"] = $tableIds[$i]->cutitahunan;
-			$jsonResult[$i]["cutikip"] = $tableIds[$i]->cutikip;
-			$jsonResult[$i]["cutiip"] = $tableIds[$i]->cutiip;
-			$jsonResult[$i]["sisa_cuti"] = $tableIds[$i]->sisa_cuti;
-
-
-			
-			
-		 }
-		 $data = $this->paginate($jsonResult,$page,$perpage);
-		$data->appends($request->all());
-        return $data;
+			$data=$this->paginate($tableIds,$perPage);
+			$data->appends($request->all());
+			return($data);
 		}
 		
-		
-		
-	public function paginate($items,$page,$perPage,$pageStart=1)
+		 public function paginate($items, $perPage, $page = null, $options = [])
     {
-
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
-
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
-
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-    }
+        $page = $page ?: (\Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof \Illuminate\Support\Collection ? $items : \Illuminate\Support\Collection::make($items);
+        return new \Illuminate\Pagination\LengthAwarePaginator(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, array('path' => Paginator::resolveCurrentPath()));
+        //ref for array_values() fix: https://stackoverflow.com/a/38712699/3553367
+    }		
+		
+		
+		
+	
 		
 }

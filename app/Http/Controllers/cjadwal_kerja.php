@@ -14,40 +14,23 @@ class cjadwal_kerja extends Controller
 		{
 			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
-			$perpage = \Request::get('perpage') ?: 10; 
+			$perPage = \Request::get('perpage') ?: 10; 
 			$sort = \Request::get('sort') ?: 'idjadwal_kerja';
 			$tableIds = DB::select("SELECT a.idjadwal_kerja,a.tgl,b.mgroup_kerja,c.parameter from tjadwal_kerja as a left join
 		tmgroup_kerja as b ON a.idmgroup_kerja = b.idmgroup_kerja left join tparameter as c on a.idparameter = c.idparameter where (c.parameter like '" . $search . "%' or b.mgroup_kerja like '" . $search . "%' )");
 
-			$jsonResult = array();
-		
-		for($i = 0;$i < count($tableIds);$i++)
-        {
-			$jsonResult[$i]["idjadwal_kerja"] = $tableIds[$i]->idjadwal_kerja;
-			$jsonResult[$i]["tgl"] = $tableIds[$i]->tgl;
-			$jsonResult[$i]["mgroup_kerja"] = $tableIds[$i]->mgroup_kerja;
-			$jsonResult[$i]["parameter"] = $tableIds[$i]->parameter;
-			
-			
-		 }
-		 $data = $this->paginate($jsonResult,$page,$perpage);
-		
-        return $data;
+			$data=$this->paginate($tableIds,$perPage);
+		$data->appends($request->all());
+		return($data);
 		}
 		
-		
-		
-	public function paginate($items,$page,$perPage,$pageStart=1)
+		 public function paginate($items, $perPage, $page = null, $options = [])
     {
-
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
-
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
-
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-    }
+        $page = $page ?: (\Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof \Illuminate\Support\Collection ? $items : \Illuminate\Support\Collection::make($items);
+        return new \Illuminate\Pagination\LengthAwarePaginator(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, array('path' => Paginator::resolveCurrentPath()));
+        //ref for array_values() fix: https://stackoverflow.com/a/38712699/3553367
+    }		
 		
 		
 		public function store(Request $request){

@@ -30,50 +30,21 @@ class Ckaryawan extends Controller
 				left join tmgroup_kerja as i on a.idgroup = i.idmgroup_kerja
 				left join tdivisi as j on a.iddivisi = j.iddivisi where a.nama like '" . $search . "%' or a.nik like '" . $search . "%' or a.jk like '" . $search . "%'  or c.jabatan like '" . $search . "%' or d.departemen like '" . $search . "%'  or i.mgroup_kerja like '" . $search . "%' or a.hp like '" . $search . "%'  " ));
 				
-        /*$jsonResult = array();
-
-        for($i = 0;$i < count($tableIds);$i++)
-        {
-			$jsonResult[$i]["idkaryawan"] = $tableIds[$i]->idkaryawan;
-			$jsonResult[$i]["pin"] = $tableIds[$i]->pin;
-			$jsonResult[$i]["nik"] = $tableIds[$i]->nik;
-			$jsonResult[$i]["noktp"] = $tableIds[$i]->noktp;
-			$jsonResult[$i]["nobpjs"] = $tableIds[$i]->nobpjs;
-			$jsonResult[$i]["nama"] = $tableIds[$i]->nama;
-			$jsonResult[$i]["tempat_lahir"] = $tableIds[$i]->tempat_lahir;
-			$jsonResult[$i]["agama"] = $tableIds[$i]->agama;
-			$jsonResult[$i]["jk"] = $tableIds[$i]->jk;
-			$jsonResult[$i]["alamat"] = $tableIds[$i]->alt;
-			$jsonResult[$i]["tlp"] = $tableIds[$i]->tlp;
-			$jsonResult[$i]["divisi"] = $tableIds[$i]->divisi;
-			$jsonResult[$i]["hp"] = $tableIds[$i]->hp;
-			$jsonResult[$i]["pendidikan"] = $tableIds[$i]->pendidikan;
-			$jsonResult[$i]["jabatan"] = $tableIds[$i]->jabatan;
-			$jsonResult[$i]["departemen"] = $tableIds[$i]->departemen;
-			$jsonResult[$i]["mgroup_kerja"] = $tableIds[$i]->mgroup_kerja;
-			$jsonResult[$i]["jobdesk"] = $tableIds[$i]->jobdesk;
-			$jsonResult[$i]["tanggal_masuk"] = $tableIds[$i]->tanggal_masuk;
-			$jsonResult[$i]["tanggal_keluar"] = $tableIds[$i]->tanggal_keluar;
-			$jsonResult[$i]["tanggal_diangkat"] = $tableIds[$i]->tanggal_diangkat;
-            
-        }*/
-		$filter_products = []; // Manual filter or your array for pagination
-
-        foreach($tableIds as $item){
-            
-                array_push($filter_products, $item);
-            
-        }
 		
-		$data=$this->paginate($filter_products,$page,$perPage,1);
+		$data=$this->paginate($tableIds,$perPage);
+		$data->appends($request->all());
 		return($data);
-
-		
 		}
 		
+		 public function paginate($items, $perPage, $page = null, $options = [])
+    {
+        $page = $page ?: (\Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof \Illuminate\Support\Collection ? $items : \Illuminate\Support\Collection::make($items);
+        return new \Illuminate\Pagination\LengthAwarePaginator(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, array('path' => Paginator::resolveCurrentPath()));
+        //ref for array_values() fix: https://stackoverflow.com/a/38712699/3553367
+    }
 		
-		
-	public function paginate($items,$page,$perPage,$pageStart=1)
+	/*public function paginate($items,$page,$perPage,$pageStart=1)
     {
 
         // Start displaying items from this number;
@@ -83,7 +54,7 @@ class Ckaryawan extends Controller
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
 
         return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-    }
+    }*/
 		
 		
 		

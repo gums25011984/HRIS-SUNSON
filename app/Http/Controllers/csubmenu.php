@@ -13,55 +13,24 @@ class csubmenu extends Controller
 	  public function index(Request $request)
 		{
 			$page = \Request::get('page') ?: 1;
-			$perpage = \Request::get('perpage') ?: 100;
+			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			
 			$tableIds = DB::select("SELECT a.idmenuitem,a.code,a.fcode,a.nameof,a.filename,a.icon,b.nameof AS menu,@no:=@no+1 AS heh 
 FROM sysappmenuitem AS a LEFT JOIN sysappmenu AS b ON a.fcode = b.code");
 
-			$jsonResult = array();
-		
-		for($i = 0;$i < count($tableIds);$i++)
-        {
-			
-			$jsonResult[$i]["idmenuitem"] = $tableIds[$i]->idmenuitem;
-			$jsonResult[$i]["code"] = $tableIds[$i]->code;
-			$jsonResult[$i]["fcode"] = $tableIds[$i]->fcode;
-			$jsonResult[$i]["nameof"] = $tableIds[$i]->nameof;
-			$jsonResult[$i]["filename"] = $tableIds[$i]->filename;
-			$jsonResult[$i]["icon"] = $tableIds[$i]->icon;
-			$jsonResult[$i]["menu"] = $tableIds[$i]->menu;
-
-			
-		 }
-		 if($jsonResult>0){ //mengecek apakah data kosong atau tidak
-				
-				$data = $this->paginate($jsonResult,$page,$perpage);
-				$data->appends($request->all());
-				return response($data);
-			}
-			else
-			{ //mengecek apakah data kosong atau tidak
-				
-				$data = $this->paginate($jsonResult,$page,$perpage);
-				$data->appends($request->all());
-				return response($data);
-			}
-		
+			$data=$this->paginate($tableIds,$perPage);
+			$data->appends($request->all());
+			return($data);
 		}
 		
-		public function paginate($items,$page,$perPage,$pageStart=1)
+		 public function paginate($items, $perPage, $page = null, $options = [])
     {
-
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
-
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
-
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-    }
-		
+        $page = $page ?: (\Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof \Illuminate\Support\Collection ? $items : \Illuminate\Support\Collection::make($items);
+        return new \Illuminate\Pagination\LengthAwarePaginator(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, array('path' => Paginator::resolveCurrentPath()));
+        //ref for array_values() fix: https://stackoverflow.com/a/38712699/3553367
+    }		
 		public function store(Request $request){
 		 $submenu = new \App\msubmenu();
 		 $submenu->code = $request->code;
