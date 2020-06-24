@@ -9,7 +9,7 @@ class csangsi extends Controller
 	  public function index(Request $request)
 		{
 			//
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perpage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idsangsi';

@@ -11,7 +11,7 @@ class CDepartementController extends Controller
 			
 			
 			//
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'iddepartemen';

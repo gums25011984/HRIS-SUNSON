@@ -14,7 +14,7 @@ class Ckaryawan extends Controller
 		{
 		$page = \Request::get('page') ?: 100;
 		$search = $request->search;
-		$perpage = \Request::get('perpage') ?: 10; 
+		$perPage = \Request::get('perpage') ?: 10; 
 		$sort = \Request::get('sort') ?: 'idkaryawan';
 	/*	$tableIds = DB::select( DB::raw("SELECT idjabatan,jabatan,'' as karyawan FROM tjabatan"));*/
 		$tableIds = DB::select( DB::raw("SELECT a.idkaryawan,a.pin,a.nik,a.noktp,a.nama,a.nobpjs,a.tempat_lahir,a.agama,a.jk,
@@ -28,9 +28,9 @@ class Ckaryawan extends Controller
 				left join regencies as g on a.idkota = g.id
 				left join provinces as h on a.idpropinsi = h.id
 				left join tmgroup_kerja as i on a.idgroup = i.idmgroup_kerja
-				left join tdivisi as j on a.iddivisi = j.iddivisi where a.nama like '" . $search . "%' or a.nik like '" . $search . "%' or a.jk like '" . $search . "%'  or c.jabatan like '" . $search . "%' or d.departemen like '" . $search . "%'  or i.mgroup_kerja like '" . $search . "%' or a.hp like '" . $search . "%'  "));
+				left join tdivisi as j on a.iddivisi = j.iddivisi where a.nama like '" . $search . "%' or a.nik like '" . $search . "%' or a.jk like '" . $search . "%'  or c.jabatan like '" . $search . "%' or d.departemen like '" . $search . "%'  or i.mgroup_kerja like '" . $search . "%' or a.hp like '" . $search . "%'  " ));
 				
-        $jsonResult = array();
+        /*$jsonResult = array();
 
         for($i = 0;$i < count($tableIds);$i++)
         {
@@ -56,15 +56,19 @@ class Ckaryawan extends Controller
 			$jsonResult[$i]["tanggal_keluar"] = $tableIds[$i]->tanggal_keluar;
 			$jsonResult[$i]["tanggal_diangkat"] = $tableIds[$i]->tanggal_diangkat;
             
+        }*/
+		$filter_products = []; // Manual filter or your array for pagination
+
+        foreach($tableIds as $item){
+            
+                array_push($filter_products, $item);
+            
         }
+		
+		$data=$this->paginate($filter_products,$page,$perPage,1);
+		return($data);
 
-
-		 if($jsonResult){ //mengecek apakah data kosong atau tidak
-				
-				$data = $this->paginate($jsonResult,$page,$perpage);
-				$data->appends($request->all());
-				return response($data);
-			}
+		
 		}
 		
 		
@@ -73,7 +77,7 @@ class Ckaryawan extends Controller
     {
 
         // Start displaying items from this number;
-        $offSet = ($pageStart* $perPage) - $perPage; 
+        $offSet = ($pageStart * $perPage) - $perPage; 
 
         // Get only the items you need using array_slice
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);

@@ -12,7 +12,7 @@ class cpribadislipgaji extends Controller
 {
 	  public function index(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perpage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idslipgaji';
@@ -43,7 +43,7 @@ tot_potongan, gaji_bersih FROM tslipgaji");
     }
 		public function pribadi_slipgaji(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perpage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$data = DB::select("SELECT a.nik,a.`nama`,c.`mgroup_kerja`, b.`departemen`,d.pendidikan,a.`tanggal_masuk`,'' AS lama_kerja, 

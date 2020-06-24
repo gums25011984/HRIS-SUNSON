@@ -12,7 +12,7 @@ class cspl extends Controller
 {
 	 public function index(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perpage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			
@@ -184,7 +184,7 @@ class cspl extends Controller
 		
 		public function cmbspl(Request $request)
 		{	
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perpage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$data = DB::select("select idpersplan,nama_persplan from tpersplan");
@@ -198,7 +198,7 @@ class cspl extends Controller
 		}
 		public function popup_karyawan(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perpage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$data = DB::select("select idkaryawan,nik,nama from tkaryawan");

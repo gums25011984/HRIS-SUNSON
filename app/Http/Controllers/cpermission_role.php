@@ -49,7 +49,7 @@ LEFT JOIN tjabatan AS c ON b.idjabatan = c.`idjabatan` where c.idjabatan ='$idja
 			
 		public function paginate($items,$page,$pageStart=1)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$currentPage = LengthAwarePaginator::resolveCurrentPage();
 			$currentResults = $items->slice(($currentPage - 1) * $page, $page)->all();
 			return new LengthAwarePaginator($currentResults, count($items), $page,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));

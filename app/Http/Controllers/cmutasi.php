@@ -12,7 +12,7 @@ class cmutasi extends Controller
 {
 	  public function index(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			
@@ -226,7 +226,7 @@ LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan where b.nama like '"
 		
 		public function departement_baru(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("select iddepartemen,departemen from tdepartemen");
@@ -240,7 +240,7 @@ LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan where b.nama like '"
 		
 		public function divisi_baru(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("select iddivisi,divisi from tdivisi");
@@ -254,7 +254,7 @@ LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan where b.nama like '"
 		
 		public function jabatan_baru(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("select idjabatan,jabatan from tjabatan");

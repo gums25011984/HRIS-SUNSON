@@ -12,7 +12,7 @@ class cpribadiprofile extends Controller
 {
 	  public function index(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("SELECT 		a.idkaryawan,a.pin,a.nik,a.noktp,a.nobpjs,a.bpjstk,a.nama,CONCAT_WS(' - ',a.tempat_lahir,a.tanggal_lahir) as lahir,a.agama,a.jk,a.jmlcuti,f.name,a.photo,
@@ -49,7 +49,7 @@ class cpribadiprofile extends Controller
 		
 		public function pribadi_cuti_diambil(Request $request)
 		{	
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("SELECT a.idkaryawan,a.tgl,c.nama_perijinan,a.tgl_keluar,a.tgl_kembali,b.qty
@@ -75,7 +75,7 @@ class cpribadiprofile extends Controller
 		
 		public function pribadi_cuti(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("SELECT a.idkaryawan,a.nik,a.nama,IFNULL(e.penggunaan_cuti,0) AS cuti_digunakan,IFNULL(c.cuti_darilembur,0) AS cuti_darilembur,
@@ -109,7 +109,7 @@ class cpribadiprofile extends Controller
 		
 		public function pribadi_ppkl(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 				$search = $request->search;
 				$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("SELECT  a.idspl,a.tgl,a.nospl,CONCAT(jam_mulai, ' - ', jam_berakhir) AS jam,b.nama,

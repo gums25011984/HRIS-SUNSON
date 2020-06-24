@@ -13,7 +13,7 @@ class Chak_akses extends Controller
 			$data = \App\mhak_akses::paginate($per_page);
 
 		
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idjabatan';

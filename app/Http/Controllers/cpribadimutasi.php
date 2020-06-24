@@ -11,7 +11,7 @@ class cpribadimutasi extends Controller
 {
 	  public function index(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("SELECT a.idkaryawan,a.idmutasi,a.tgl,b.nik,b.nama ,c.departemen AS dept_awal,d.divisi AS 
@@ -36,7 +36,7 @@ LEFT JOIN tjabatan AS h ON a.`idjabatan_baru` = h.idjabatan");
 		
 		public function pribadi_mutasi(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			$data = DB::select("SELECT a.idkaryawan,a.idmutasi,a.tgl,b.nik,b.nama ,c.departemen AS dept_awal,d.divisi AS 

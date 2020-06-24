@@ -9,7 +9,7 @@ class cmain_menu extends Controller
 	  public function index(Request $request)
 		{
 			//
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idmenu';

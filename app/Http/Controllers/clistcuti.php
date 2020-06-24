@@ -11,7 +11,7 @@ class clistcuti extends Controller
 {
 	  public function index(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			

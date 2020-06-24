@@ -23,7 +23,7 @@ class cpribadispkl extends Controller
 	
 	  public function index(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perpage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$data = DB::select("SELECT a.idspl,a.`nospl`,a.tgl,e.nama AS leader,a.jam,a.`jam_mulai`,a.`jam_berakhir`,c.nama AS manager, 								  a.acc,a. ket
@@ -40,7 +40,7 @@ left join tkaryawan as e ON d.idkaryawan = e.idkaryawan");
 		}
 		public function pribadi_spkl(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$perpage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$data = DB::select("SELECT a.idspl,a.`nospl`,a.tgl,b.nama AS leader,a.jam,a.`jam_mulai`,a.`jam_berakhir`,a. ket,a.ket_kabag,a.ket_kadep,a.ket_manager

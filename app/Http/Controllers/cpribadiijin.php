@@ -12,7 +12,7 @@ class cpribadiijin extends Controller
 {
 	  public function index(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10; 
 			
@@ -44,7 +44,7 @@ FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left j
 		
 		public function pribadi_persetujuan(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
+			$page = \Request::get('page') ?: 1;
 			$search = $request->search;
 			$perpage = \Request::get('perpage') ?: 10;
 			$data = DB::select("SELECT b.idijin, c.ket_karu,c.ket_kaur,c.ket_kabag,c.ket_kadep,b.idkaryawan,a.nama,c.`tgl_keluar`,c.`tgl_kembali`,d.`jabatan`,COUNT(b.idcuti) AS jmlcuti FROM

@@ -12,8 +12,8 @@ class Cgapok extends Controller
 {
 	 public function index(Request $request)
 		{
-			$page = \Request::get('page') ?: 100;
-			$perpage = \Request::get('perpage') ?: 100;
+			$page = \Request::get('page') ?: 1;
+			$perPage = \Request::get('perpage') ?: 100;
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'idgapok';
 			
@@ -48,24 +48,22 @@ left join tstatus_kerja as c ON a.idstatus_kerja = c.idstatus_kerja where a.nama
 			$jsonResult[$i]["pot_bisnis"] = $tableIds[$i]->pot_bisnis;
 			
 		 }
-		 $data = $this->paginate($jsonResult,$page,$perpage);
-		
-        return $data;
+		$collect = collect($jsonResult);
+			return $paginationData = new LengthAwarePaginator(
+                         $collect->forPage($page, $perPage),
+                         $collect->count(), 
+                         $page, 
+                         $perPage,
+						[
+							'path' => LengthAwarePaginator::resolveCurrentPath(),
+							'pageName' => 'page',
+						]
+                       );
 		}
 		
 		
 		
-	public function paginate($items,$page,$perPage,$pageStart=1)
-    {
-
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage; 
-
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
-
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage,Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-    }
+	
 		
 		public function store(Request $request){
 		 $gapok = new \App\mgapok();
