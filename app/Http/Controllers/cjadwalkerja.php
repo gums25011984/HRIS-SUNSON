@@ -20,7 +20,7 @@ class cjadwalkerja extends Controller
 			$perPage = \Request::get('perpage') ?: 10; 
 			$sort = \Request::get('sort') ?: 'idjadwal_kerja';
 			
-			$tableIds = DB::select("select idjadwal_kerja,year(tgl) as tahun,tgl as startDate,tglend as endDate,idmgroup_kerja,idparameter from tjadwal_kerja where idjadwal_kerja='$idjadwal_kerja' and idparameter='$idparameter' and tgl='$startdate' and tglend ='$enddate' and idparameter='$idparameter' ");
+			$tableIds = DB::select("select idjadwal_kerja,year(tgl) as tahun,tgl as startDate,tglend as endDate,idmgroup_kerja,idparameter from tjadwal_kerja where idjadwal_kerja='$idjadwal_kerja' and idparameter='$idparameter' and (tgl=>'$startdate' and tglend <='$enddate') and idparameter='$idparameter' ");
 
 			$data=$this->paginate($tableIds,$perPage);
 		$data->appends($request->all());
@@ -40,96 +40,20 @@ class cjadwalkerja extends Controller
 		
 		
 		public function store(Request $request){
-		 $karyawan = new \App\mkaryawan();
-		  $karyawan->pin = $request->pin; 
-		  $karyawan->nik = $request->nik;
-		  $karyawan->nobpjs = $request->nobpjs;
-		  $karyawan->bpjstk = $request->bpjstk;
-		  $karyawan->nama = $request->nama;
-		  $karyawan->tempat_lahir = $request->tempat_lahir;
-		  $karyawan->tanggal_lahir = $request->tanggal_lahir;
-		  $karyawan->noktp = $request->noktp;
-		  $karyawan->agama = $request->agama;
-		  $karyawan->jk = $request->jk;
-		  $karyawan->photo = $request->photo;
-		  $karyawan->idgroup = $request->idgroup;
-		  $karyawan->idstatus_pernikahan = $request->idstatus_pernikahan;
-		  $karyawan->jml_anak = $request->jml_anak;
-		  $karyawan->alamat = $request->alamat;
-		  $karyawan->alamat_sekarang = $request->alamat_sekarang;
-		  $karyawan->kode_pos = $request->kode_pos;
-		  $karyawan->idpropinsi = $request->idpropinsi;
-		  $karyawan->idkota = $request->idkota;
-		  $karyawan->idkecamatan = $request->idkecamatan;
-		  $karyawan->iddesa = $request->iddesa;
-		  $karyawan->negara = $request->negara;
-		  $karyawan->tlp = $request->tlp;
-		  $karyawan->hp = $request->hp;
-		  $karyawan->idpendidikan = $request->idpendidikan; 
-		  $karyawan->idjabatan = $request->idjabatan; 
-		  $karyawan->idstatus_kerja = $request->idstatus_kerja; 
-		  $karyawan->idcabang = $request->idcabang;
-		  $karyawan->iddepartemen = $request->iddepartemen;
-		  $karyawan->iddivisi = $request->iddivisi;
-		  $karyawan->idgaji = $request->idgaji; 
-		  $karyawan->tanggal_diangkat = $request->tanggal_diangkat; 
-		  $karyawan->tanggal_masuk = $request->tanggal_masuk; 
-		  $karyawan->tglhabis_kontrak = $request->tglhabis_kontrak;
-		  $karyawan->tanggal_keluar = $request->tanggal_keluar;
-		  $karyawan->jobdesk = $request->jobdesk;
-		  $karyawan->jmlcuti = $request->jmlcuti;
-		  $karyawan->idtransportlembur = $request->idtransportlembur;
-		  $karyawan->suami_istri = $request->suami_istri;
-		  $karyawan->tempat_lahir0 = $request->tempat_lahir0;
-		  $karyawan->tanggal_lahir0 = $request->tanggal_lahir0;
-		  $karyawan->alamat0 = $request->alamat0;
-		  $karyawan->ket0 = $request->ket0; 
-		  $karyawan->tlp0 = $request->tlp0;
-		  $karyawan->anak1 = $request->anak1;
-		  $karyawan->tempat_lahir1 = $request->tempat_lahir1; 
-		  $karyawan->tanggal_lahir1 = $request->tanggal_lahir1;
-		  $karyawan->alamat1 = $request->alamat1; 
-		  $karyawan->ket1 = $request->ket1; 
-		  $karyawan->tlp1 = $request->tlp1; 
-		  $karyawan->anak2 = $request->anak2;
-		  $karyawan->tempat_lahir2 = $request->tempat_lahir2;
-		  $karyawan->tanggal_lahir2 = $request->tanggal_lahir2;
-		  $karyawan->alamat2 = $request->alamat2;
-		  $karyawan->ket2 = $request->ket2;
-		  $karyawan->tlp2 = $request->tlp2;
-		  $karyawan->anak3 = $request->anak3;
-		  $karyawan->tempat_lahir3 = $request->tempat_lahir3;
-		  $karyawan->tanggal_lahir3 = $request->tanggal_lahir3;
-		  $karyawan->alamat3 = $request->alamat3;
-		  $karyawan->ket3 = $request->ket3;
-		  $karyawan->tlp3 = $request->tlp3;
-		  $karyawan->anak4 = $request->anak4;
-		  $karyawan->tempat_lahir4 = $request->tempat_lahir4;
-		  $karyawan->tanggal_lahir4 = $request->tanggal_lahir4;
-		  $karyawan->alamat4 = $request->alamat4;
-		  $karyawan->ket4 = $request->ket4;
-		  $karyawan->tlp4 = $request->tlp4;
-		  $karyawan->ayah = $request->ayah;
-		  $karyawan->tempat_lahir_ayah = $request->tempat_lahir_ayah;
-		  $karyawan->tanggal_lahir_ayah = $request->tanggal_lahir_ayah;
-		  $karyawan->alamat_ayah = $request->alamat_ayah;
-		  $karyawan->ket_ayah = $request->ket_ayah;
-		  $karyawan->tlpayah = $request->tlpayah;
-		  $karyawan->ibu = $request->ibu;
-		  $karyawan->tempat_lahir_ibu = $request->tempat_lahir_ibu;
-		  $karyawan->tanggal_lahir_ibu = $request->tanggal_lahir_ibu; 
-		  $karyawan->alamat_ibu = $request->alamat_ibu;
-		  $karyawan->ket_ibu = $request->ket_ibu;
-		  $karyawan->tlpibu = $request->tlpibu;
-		  $karyawan->idalat_kontrasepsi = $request->idalat_kontrasepsi;
-		  $karyawan->PASSWORD = $request->PASSWORD;
-		  $karyawan->insert_by = $request->insert_by;
-		  $karyawan->insert_time = $request->insert_time;
-		  $karyawan->update_by = $request->update_by;
-		  $karyawan->update_time = $request->update_time;
-		 if($karyawan->save()){ 
+		 $jadwal_kerja = new \App\mjadwal_kerja();
+		 $jadwal_kerja->tgl = $request->tgl;
+		 $jadwal_kerja->tglend = $request->tglend;
+		 $jadwal_kerja->idmgroup_kerja = $request->idmgroup_kerja;
+		 $jadwal_kerja->idparameter = $request->idparameter;
+		 
+		
+		 $jadwal_kerja->insert_by = $request->insert_by;
+		 $jadwal_kerja->insert_time = $request->insert_time;
+		 $jadwal_kerja->update_by = $request->update_by;
+		 $jadwal_kerja->update_time = $request->update_time;
+		 if($jadwal_kerja->save()){ 
 				$res['message'] = "Success!";
-				$res['value'] = "$karyawan";
+				$res['value'] = "$jadwal_kerja";
 				return response($res);
 			}
 		}
@@ -138,190 +62,36 @@ class cjadwalkerja extends Controller
 		public function update(Request $request, $id)
 		{
 			//
-			 
-		  $pin = $request->pin; 
-		  $nik = $request->nik;
-		  $nobpjs = $request->nobpjs;
-		  $bpjstk = $request->bpjstk;
-		  $nama = $request->nama;
-		  $tempat_lahir = $request->tempat_lahir;
-		  $tanggal_lahir = $request->tanggal_lahir;
-		  $noktp = $request->noktp;
-		  $agama = $request->agama;
-		  $jk = $request->jk;
-		  $photo = $request->photo;
-		  $idgroup = $request->idgroup;
-		  $idstatus_pernikahan = $request->idstatus_pernikahan;
-		  $jml_anak = $request->jml_anak;
-		  $alamat = $request->alamat;
-		  $alamat_sekarang = $request->alamat_sekarang;
-		  $kode_pos = $request->kode_pos;
-		  $idpropinsi = $request->idpropinsi;
-		  $idkota = $request->idkota;
-		  $idkecamatan = $request->idkecamatan;
-		  $iddesa = $request->iddesa;
-		  $negara = $request->negara;
-		  $tlp = $request->tlp;
-		  $hp = $request->hp;
-		  $idpendidikan = $request->idpendidikan; 
-		  $idjabatan = $request->idjabatan; 
-		  $idstatus_kerja = $request->idstatus_kerja; 
-		  $idcabang = $request->idcabang;
-		  $iddepartemen = $request->iddepartemen;
-		  $iddivisi = $request->iddivisi;
-		  $idgaji = $request->idgaji; 
-		  $tanggal_diangkat = $request->tanggal_diangkat; 
-		  $tanggal_masuk = $request->tanggal_masuk; 
-		  $tglhabis_kontrak = $request->tglhabis_kontrak;
-		  $tanggal_keluar = $request->tanggal_keluar;
-		  $jobdesk = $request->jobdesk;
-		  $jmlcuti = $request->jmlcuti;
-		  $idtransportlembur = $request->idtransportlembur;
-		  $suami_istri = $request->suami_istri;
-		  $tempat_lahir0 = $request->tempat_lahir0;
-		  $tanggal_lahir0 = $request->tanggal_lahir0;
-		  $alamat0 = $request->alamat0;
-		  $ket0 = $request->ket0; 
-		  $tlp0 = $request->tlp0;
-		  $anak1 = $request->anak1;
-		  $tempat_lahir1 = $request->tempat_lahir1; 
-		  $tanggal_lahir1 = $request->tanggal_lahir1;
-		  $alamat1 = $request->alamat1; 
-		  $ket1 = $request->ket1; 
-		  $tlp1 = $request->tlp1; 
-		  $anak2 = $request->anak2;
-		  $tempat_lahir2 = $request->tempat_lahir2;
-		  $tanggal_lahir2 = $request->tanggal_lahir2;
-		  $alamat2 = $request->alamat2;
-		  $ket2 = $request->ket2;
-		  $tlp2 = $request->tlp2;
-		  $anak3 = $request->anak3;
-		  $tempat_lahir3 = $request->tempat_lahir3;
-		  $tanggal_lahir3 = $request->tanggal_lahir3;
-		  $alamat3 = $request->alamat3;
-		  $ket3 = $request->ket3;
-		  $tlp3 = $request->tlp3;
-		  $anak4 = $request->anak4;
-		  $tempat_lahir4 = $request->tempat_lahir4;
-		  $tanggal_lahir4 = $request->tanggal_lahir4;
-		  $alamat4 = $request->alamat4;
-		  $ket4 = $request->ket4;
-		  $tlp4 = $request->tlp4;
-		  $ayah = $request->ayah;
-		  $tempat_lahir_ayah = $request->tempat_lahir_ayah;
-		  $tanggal_lahir_ayah = $request->tanggal_lahir_ayah;
-		  $alamat_ayah = $request->alamat_ayah;
-		  $ket_ayah = $request->ket_ayah;
-		  $tlpayah = $request->tlpayah;
-		  $ibu = $request->ibu;
-		  $tempat_lahir_ibu = $request->tempat_lahir_ibu;
-		  $tanggal_lahir_ibu = $request->tanggal_lahir_ibu; 
-		  $alamat_ibu = $request->alamat_ibu;
-		  $ket_ibu = $request->ket_ibu;
-		  $tlpibu = $request->tlpibu;
-		  $idalat_kontrasepsi = $request->idalat_kontrasepsi;
-		  $PASSWORD = $request->PASSWORD;
-		  $insert_by = $request->insert_by;
-		  $insert_time = $request->insert_time;
-		  $update_by = $request->update_by;
-		  $update_time = $request->update_time;
+
+			 $tgl = $request->tgl;
+			 $tglend = $request->tglend;
+			 $idmgroup_kerja = $request->idmgroup_kerja;
+			 $idparameter = $request->idparameter;
+				 
+			 $insert_by = $request->insert_by;
+			 $insert_time = $request->insert_time;
+			 $update_by = $request->update_by;
+			 $update_time = $request->update_time;
 			 
 			
-			$karyawan = \App\mkaryawan::where('idkaryawan',$id) ->update([
+			$jadwal_kerja = \App\mjadwal_kerja::where('idjadwal_kerja',$id) ->update([
+			 	 
+				 'tgl' => $tgl,
+				 'tglend' => $tglend,
+				 'idmgroup_kerja' => $idmgroup_kerja,
+				 'idparameter' => $idparameter,
 				 
-				  'pin' => $pin, 
-				  'nik' =>  $nik,
-				  'nobpjs' =>  $nobpjs,
-				  'bpjstk' =>  $bpjstk,
-				  'nama' =>  $nama,
-				  'tempat_lahir' =>  $tempat_lahir,
-				  'tanggal_lahir' =>  $tanggal_lahir,
-				  'noktp' =>  $noktp,
-				  'agama' =>  $agama,
-				  'jk' =>  $jk,
-				  'photo' =>  $photo,
-				  'idgroup' =>  $idgroup,
-				  'idstatus_pernikahan' =>  $idstatus_pernikahan,
-				  'jml_anak' =>  $jml_anak,
-				  'alamat' =>  $alamat,
-				  'alamat_sekarang' =>  $alamat_sekarang,
-				  'kode_pos' =>  $kode_pos,
-				  'idpropinsi' =>  $idpropinsi,
-				  'idkota' =>  $idkota,
-				  'idkecamatan' =>  $idkecamatan,
-				  'iddesa' =>  $iddesa,
-				  'negara' =>  $negara,
-				  'tlp' =>  $tlp,
-				  'hp' =>  $hp,
-				  'idpendidikan' =>  $idpendidikan, 
-				  'idjabatan' =>  $idjabatan, 
-				  'idstatus_kerja' =>  $idstatus_kerja, 
-				  'idcabang' =>  $idcabang,
-				  'iddepartemen' =>  $iddepartemen,
-				  'iddivisi' =>  $iddivisi,
-				  'idgaji' =>  $idgaji, 
-				  'tanggal_diangkat' =>  $tanggal_diangkat, 
-				  'tanggal_masuk' =>  $tanggal_masuk, 
-				  'tglhabis_kontrak' =>  $tglhabis_kontrak,
-				  'tanggal_keluar' =>  $tanggal_keluar,
-				  'jobdesk' =>  $jobdesk,
-				  'jmlcuti' =>  $jmlcuti,
-				  'idtransportlembur' =>  $idtransportlembur,
-				  'suami_istri' =>  $suami_istri,
-				  'tempat_lahir0' =>  $tempat_lahir0,
-				  'tanggal_lahir0' =>  $tanggal_lahir0,
-				  'alamat0' =>  $alamat0,
-				  'ket0' =>  $ket0, 
-				  'tlp0' =>  $tlp0,
-				  'anak1' =>  $anak1,
-				  'tempat_lahir1' =>  $tempat_lahir1, 
-				  'tanggal_lahir1' =>  $tanggal_lahir1,
-				  'alamat1' =>  $alamat1, 
-				  'ket1' =>  $ket1, 
-				  'tlp1' =>  $tlp1, 
-				  'anak2' =>  $anak2,
-				  'tempat_lahir2' =>  $tempat_lahir2,
-				  'tanggal_lahir2' =>  $tanggal_lahir2,
-				  'alamat2' =>  $alamat2,
-				  'ket2' =>  $ket2,
-				  'tlp2' =>  $tlp2,
-				  'anak3' =>  $anak3,
-				  'tempat_lahir3' =>  $tempat_lahir3,
-				  'tanggal_lahir3' =>  $tanggal_lahir3,
-				  'alamat3' =>  $alamat3,
-				  'ket3' =>  $ket3,
-				  'tlp3' =>  $tlp3,
-				  'anak4' =>  $anak4,
-				  'tempat_lahir4' =>  $tempat_lahir4,
-				  'tanggal_lahir4' =>  $tanggal_lahir4,
-				  'alamat4' =>  $alamat4,
-				  'ket4' =>  $ket4,
-				  'tlp4' =>  $tlp4,
-				  'ayah' =>  $ayah,
-				  'tempat_lahir_ayah' =>  $tempat_lahir_ayah,
-				  'tanggal_lahir_ayah' =>  $tanggal_lahir_ayah,
-				  'alamat_ayah' =>  $alamat_ayah,
-				  'ket_ayah' =>  $ket_ayah,
-				  'tlpayah' =>  $tlpayah,
-				  'ibu' =>  $ibu,
-				  'tempat_lahir_ibu' =>  $tempat_lahir_ibu,
-				  'tanggal_lahir_ibu' =>  $tanggal_lahir_ibu, 
-				  'alamat_ibu' =>  $alamat_ibu,
-				  'ket_ibu' =>  $ket_ibu,
-				  'tlpibu' =>  $tlpibu,
-				  'idalat_kontrasepsi' =>  $idalat_kontrasepsi,
-				  'PASSWORD' =>  $PASSWORD,
-				  'insert_by' =>  $insert_by,
-				  'insert_time' =>  $insert_time,
-				  'update_by' =>  $update_by,
-				  'update_time' =>  $update_time,
+				 'insert_by' => $insert_by,
+				 'insert_time' => $insert_time,
+				 'update_by' => $update_by,
+				 'update_time' => $update_time,
 			 ]);		 
 
 			 
-			$success=$karyawan;
+			$success=$jadwal_kerja;
 			if($success){
 				$res['message'] = "Success!";
-				$res['value'] = "$karyawan";
+				$res['value'] = "$jadwal_kerja";
 				return response($res);
 			}
 			else{
@@ -331,7 +101,7 @@ class cjadwalkerja extends Controller
 		}
 		public function show($id)
 		{
-			$data = \App\mkaryawan::where('idkaryawan',$id)->get();
+			$data = \App\mjadwal_kerja::where('idjadwal_kerja',$id)->get();
 		
 			if(count($data) > 0){ //mengecek apakah data kosong atau tidak
 				$res['message'] = "Success!";
@@ -344,11 +114,9 @@ class cjadwalkerja extends Controller
 			}
 		}
 		
-		
-		
 		public function delete($id)
 		{
-			$data = \App\mkaryawan::where('idkaryawan',$id)->first();
+			$data = \App\mjadwal_kerja::where('idjadwal_kerja',$id)->first();
 		
 			if($data->delete($id)){
 				$res['message'] = "Success!";
@@ -357,176 +125,6 @@ class cjadwalkerja extends Controller
 			}
 			else{
 				$res['message'] = "Failed!";
-				return response($res);
-			}
-		}
-		
-		public function propinsi()
-		{
-			$data = DB::select("select id,name from provinces");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function kabupaten()
-		{
-			$data = DB::select("select id,name from regencies limit 10");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function kecamatan()
-		{
-			$data = DB::select("select id,name from districts limit 10");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function desa()
-		{
-			$data = DB::select("select id,name from villages limit 10");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function status_pernikahan()
-		{
-			$data = DB::select("select idstatus_pernikahan,status_pernikahan from tstatus_pernikahan");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function alat_kontrasepsi()
-		{
-			$data = DB::select("select idalat_kontrasepsi,alat_kontrasepsi from talat_kontrasepsi");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function jabatan()
-		{
-			$data = DB::select("select idjabatan,jabatan from tjabatan");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function pendidikan()
-		{
-			$data = DB::select("select idpendidikan,pendidikan from tpendidikan");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function divisi()
-		{
-			$data = DB::select("select iddivisi,divisi from tdivisi");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function departemen()
-		{
-			$data = DB::select("select iddepartemen,departemen from tdepartemen");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function status_kerja()
-		{
-			$data = DB::select("select idstatus_kerja,status_kerja from tstatus_kerja");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function mgroup_kerja()
-		{
-			$data = DB::select("select idmgroup_kerja,mgroup_kerja from tmgroup_kerja");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
-				return response($res);
-			}
-		}
-		public function transportlembur()
-		{
-			$data = DB::select("select idtransportlembur,jurusan from ttransportlembur");
-			if($data > 0){ //mengecek apakah data kosong atau tidak
-				$res['message'] = "Success!";
-				$res['values'] = $data;
-				return response($res);
-			}
-			else{
-				$res['message'] = "Empty!";
 				return response($res);
 			}
 		}
