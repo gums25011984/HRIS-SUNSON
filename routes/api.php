@@ -20,11 +20,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //mhkaryawan
 Route::get('hkaryawan','chkaryawan@index');
 
+//jadwal kerja
+Route::get('jadwalkerja','cjadwalkerja@index');
+
+
 //rjabatan
 Route::get('rjabatan','rjabatan@index');
 
 //rspt
 Route::get('permintaan','permintaan@index');
+
+//rspt
+Route::get('role_permission','crole_permission@index');
 
 //rspt
 Route::get('rspt','rspt@index');
@@ -40,11 +47,11 @@ Route::put('/departement/update/{id}','CDepartementController@update');
 Route::delete('/departement/delete/{id}','CDepartementController@delete');
 
 //alat kontrasepsi
-Route::get('alat_kontrasepsi','CAlat_kontrasepsi@index');
+/*Route::get('alat_kontrasepsi','CAlat_kontrasepsi@index');
 Route::get('/alat_kontrasepsi/{id}','Calat_kontrasepsi@show');
 Route::post('/alat_kontrasepsi/store','Calat_kontrasepsi@store');
 Route::put('/alat_kontrasepsi/update/{id}','Calat_kontrasepsi@update');
-Route::get('/alat_kontrasepsi/delete/{id}','Calat_kontrasepsi@delete');
+Route::get('/alat_kontrasepsi/delete/{id}','Calat_kontrasepsi@delete');*/
 
 //divisi
 Route::get('divisi','Cdivisi@index');
@@ -197,6 +204,8 @@ Route::get('/spl/show/{id}','cspl@show');
 Route::post('/spl/store','cspl@store');
 Route::put('/spl/update/{id}','cspl@update');
 Route::get('/spl/delete/{id}','cspl@delete');
+Route::get('/spl/cmbspl','cspl@cmbspl');
+Route::get('/spl/popup_karyawan','cspl@popup_karyawan');
 
 //listcuti
 Route::get('listcuti','clistcuti@index');
