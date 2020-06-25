@@ -13,14 +13,16 @@ class cjadwalkerja extends Controller
 		 public function index(Request $request)
 		{
 			$page = \Request::get('page') ?: 1;
-			$idjadwal_kerja = $request->idjadwal_kerja;
-			$idparameter = $request->idparameter;
-			$startdate = $request->startdate;
-			$enddate = $request->enddate;
+
+			$idmgroup_kerja = $request->idmgroup_kerja;
+			$tahun = $request->tahun;
+			$bulan = $request->bulan;
 			$perPage = \Request::get('perpage') ?: 10; 
 			$sort = \Request::get('sort') ?: 'idjadwal_kerja';
 			
-			$tableIds = DB::select("select idjadwal_kerja,year(tgl) as tahun,tgl as startDate,tglend as endDate,idmgroup_kerja,idparameter from tjadwal_kerja where idjadwal_kerja='$idjadwal_kerja' and idparameter='$idparameter' and (tgl=>'$startdate' and tglend <='$enddate') and idparameter='$idparameter' ");
+			$tableIds = DB::select("SELECT idjadwal_kerja,YEAR(tgl) AS tahun,tgl AS startDate,tglend AS endDate,
+idmgroup_kerja,idparameter FROM tjadwal_kerja WHERE 
+idmgroup_kerja='$idmgroup_kerja' and YEAR(tglend)>='$tahun' AND MONTH(tglend)>='$bulan'  ");
 
 			$data=$this->paginate($tableIds,$perPage);
 		$data->appends($request->all());
