@@ -24,9 +24,9 @@ class cjadwalkerja extends Controller
 idmgroup_kerja,idparameter FROM tjadwal_kerja WHERE 
 idmgroup_kerja='$idmgroup_kerja' and YEAR(tglend)>='$tahun' AND MONTH(tglend)>='$bulan'  ");
 
-			$data=$this->paginate($tableIds,$perPage);
-		$data->appends($request->all());
-		return($data);
+			/*$data=$this->paginate($tableIds,$perPage);
+		$data->appends($request->all());*/
+		return($tableIds);
 		}
 		
 		 public function paginate($items, $perPage, $page = null, $options = [])
