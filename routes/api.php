@@ -22,7 +22,10 @@ Route::get('hkaryawan','chkaryawan@index');
 
 //jadwal kerja
 Route::get('jadwalkerja','cjadwalkerja@index');
-
+Route::get('/jadwalkerja/show/{id}','cjadwalkerja@show');
+Route::post('/jadwalkerja/store','cjadwalkerja@store');
+Route::put('/jadwalkerja/update/{id}','cjadwalkerja@update');
+Route::get('/jadwalkerja/delete/{id}','cjadwalkerja@delete');
 
 //rjabatan
 Route::get('rjabatan','rjabatan@index');
