@@ -14,15 +14,15 @@ class cjadwalkerja extends Controller
 		{
 			$page = \Request::get('page') ?: 1;
 
-			$idmgroup_kerja = $request->idmgroup_kerja;
+			$mgroup_kerja = $request->mgroup_kerja;
 			$tahun = $request->tahun;
 			$bulan = $request->bulan;
-			$perPage = \Request::get('perpage') ?: 10; 
+			$perPage = \Request::get('perpage') ?: 100; 
 			$sort = \Request::get('sort') ?: 'idjadwal_kerja';
 			
-			$tableIds = DB::select("SELECT a.idjadwal_kerja,YEAR(tgl) AS tahun,a.tgl AS startDate,a.tglend AS endDate,
-b.kdparameter,c.kdmgroup_kerja FROM tjadwal_kerja AS a LEFT JOIN tparameter AS b ON a.idparameter = b.idparameter LEFT JOIN tmgroup_kerja AS c ON a.idmgroup_kerja = c.idmgroup_kerja WHERE 
-a.idmgroup_kerja='$idmgroup_kerja' and YEAR(tglend)>='$tahun' AND MONTH(tglend)>='$bulan'  ");
+			$tableIds = DB::select("SELECT a.idjadwal_kerja,a.tgl AS startDate,a.tglend AS endDate,
+CONCAT(b.parameter, ' (', LEFT(b.work_start,5),'-', LEFT(b.work_end,5),')') as title FROM tjadwal_kerja AS a LEFT JOIN tparameter AS b ON a.idparameter = b.idparameter LEFT JOIN tmgroup_kerja AS c ON a.idmgroup_kerja = c.idmgroup_kerja WHERE 
+c.mgroup_kerja='$mgroup_kerja' and YEAR(tglend)='$tahun'");
 
 			/*$data=$this->paginate($tableIds,$perPage);
 		$data->appends($request->all());*/
