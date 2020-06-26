@@ -13,9 +13,10 @@ class cijin extends Controller
 {
 	  public function index(Request $request)
 		{
-			$search = $request->search; 
-			$perPage = $request->perpage;
-			$page = $request->page;
+		$page = \Request::get('page') ?: 100;
+		$search = $request->search;
+		$perPage = \Request::get('perpage') ?: 10; 
+		$sort = \Request::get('sort') ?: 'idijin';
 		
 			$tableIds = DB::select("SELECT a.idijin,a.idperijinan,a.tgl,b.nama AS karyawan,a.tgl_keluar,a.jam_keluar,a.tgl_kembali,a.jam_kembali,a.ket,c.nama_perijinan
 FROM tijin AS a LEFT JOIN tkaryawan AS b ON a.`idkaryawan` = b.idkaryawan left join tperijinan as c ON a.idperijinan = c.idperijinan");
