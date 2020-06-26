@@ -20,9 +20,9 @@ class crole_permission extends Controller
 		$iddepartemen = $request->iddepartemen; 
 		$sort = \Request::get('sort') ?: 'idpermission';
 	/*	$tableIds = DB::select( DB::raw("SELECT idjabatan,jabatan,'' as karyawan FROM tjabatan"));*/
-		$tableIds = DB::select( DB::raw("SELECT a.idpermission,b.`nameof`,b.`urlpermission`, a.create,a.read,a.update,a.delete,
+		$tableIds = DB::select( DB::raw("SELECT B.CODE,b.`nameof`,b.`urlpermission`, a.create,a.read,a.update,a.delete,
 a.idjabatan,a.iddivisi,a.iddepartemen
-FROM permission_role AS a LEFT JOIN permission AS b ON a.idpermission = b.`idpermission`
+FROM permission_role AS a LEFT JOIN permission AS b ON a.kdpermission = b.`fcode`
 	
 WHERE  (a.idjabatan =  '$idjabatan' and a.iddepartemen =  '$iddepartemen' and a.iddivisi =  '$iddivisi')  "));
 				
@@ -30,7 +30,7 @@ WHERE  (a.idjabatan =  '$idjabatan' and a.iddepartemen =  '$iddepartemen' and a.
 
         for($i = 0;$i < count($tableIds);$i++)
         {
-		    $jsonResult[$i]["id_permission"] = $tableIds[$i]->idpermission;
+		    $jsonResult[$i]["kdpermission"] = $tableIds[$i]->CODE;
 			$jsonResult[$i]["name_permission"] = $tableIds[$i]->nameof;
 			$jsonResult[$i]["url_permission"] = $tableIds[$i]->urlpermission;
 			$jsonResult[$i]["create"] = $tableIds[$i]->create;

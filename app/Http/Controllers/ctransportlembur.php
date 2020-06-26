@@ -14,12 +14,13 @@ class ctransportlembur extends Controller
 			$search = $request->search;
 			$sort = \Request::get('sort') ?: 'jurusan';
 			$data = \App\Mtransportlembur::where('jurusan','like',"%".$search."%")->orderby($sort, 'asc');
+			
 			$data=$data->paginate($perPage=$perPage,$columns='*',$pageName='page',$page=$page);
 			/*$data = \App\Mtransport_lembur::paginate($per_page);*/
 			
 		
 			if($data){ //mengecek apakah data kosong atau tidak
-			$data->appends($request->all());
+				$data->appends($request->all());
 				return response($data);
 			}
 			
@@ -73,6 +74,7 @@ class ctransportlembur extends Controller
 				return response($res);
 			}
 		}
+		
 		public function show($id)
 		{
 			$data = \App\mtransportlembur::where('idtransportlembur',$id)->get();
