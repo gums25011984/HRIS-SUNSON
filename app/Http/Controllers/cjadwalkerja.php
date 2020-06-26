@@ -20,9 +20,9 @@ class cjadwalkerja extends Controller
 			$perPage = \Request::get('perpage') ?: 10; 
 			$sort = \Request::get('sort') ?: 'idjadwal_kerja';
 			
-			$tableIds = DB::select("SELECT idjadwal_kerja,YEAR(tgl) AS tahun,tgl AS startDate,tglend AS endDate,
-idmgroup_kerja,idparameter FROM tjadwal_kerja WHERE 
-idmgroup_kerja='$idmgroup_kerja' and YEAR(tglend)>='$tahun' AND MONTH(tglend)>='$bulan'  ");
+			$tableIds = DB::select("SELECT a.idjadwal_kerja,YEAR(tgl) AS tahun,a.tgl AS startDate,a.tglend AS endDate,
+b.kdparameter,c.kdmgroup_kerja FROM tjadwal_kerja AS a LEFT JOIN tparameter AS b ON a.idparameter = b.idparameter LEFT JOIN tmgroup_kerja AS c ON a.idmgroup_kerja = c.idmgroup_kerja WHERE 
+a.idmgroup_kerja='$idmgroup_kerja' and YEAR(tglend)>='$tahun' AND MONTH(tglend)>='$bulan'  ");
 
 			/*$data=$this->paginate($tableIds,$perPage);
 		$data->appends($request->all());*/
